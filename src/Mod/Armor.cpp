@@ -40,6 +40,7 @@ Armor::Armor(const std::string &type, int listOrder) :
 	_type(type), _infiniteSupply(false), _frontArmor(0), _sideArmor(0), _leftArmorDiff(0), _rearArmor(0), _underArmor(0),
 	_drawingRoutine(0), _drawBubbles(false), _movementType(MT_WALK), _specab(SPECAB_NONE), _turnBeforeFirstStep(false), _turnCost(1), _moveSound(-1), _size(1), _weight(0),
 	_visibilityAtDark(0), _visibilityAtDay(0),
+	_noiseMovementFactor(1.0f), _hearingBonus(0),
 	_camouflageAtDay(0), _camouflageAtDark(0), _antiCamouflageAtDay(0), _antiCamouflageAtDark(0),
 	_visibilityThroughSmoke(0), _visibilityThroughFire(100),
 	_psiVision(0), _psiCamouflage(0),
@@ -174,6 +175,8 @@ void Armor::load(const YAML::YamlNodeReader& node, Mod *mod, const ModScript &pa
 	reader.tryRead("weight", _weight);
 	reader.tryRead("visibilityAtDark", _visibilityAtDark);
 	reader.tryRead("visibilityAtDay", _visibilityAtDay);
+	reader.tryRead("noiseMovementFactor", _noiseMovementFactor);
+	reader.tryRead("hearingBonus", _hearingBonus);
 	reader.tryRead("personalLight", _personalLightFriend);
 	reader.tryRead("personalLightHostile", _personalLightHostile);
 	reader.tryRead("personalLightNeutral", _personalLightNeutral);

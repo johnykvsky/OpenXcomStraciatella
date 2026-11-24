@@ -1,0 +1,9 @@
+# metadata.yml for Jagged Alliance 2 Straciatella Suppression
+
+name: "Jagged Alliance 2 Straciatella Suppression"
+id: ja2-stracciatella-suppression
+version: "1.0"
+description: "Brings Jagged Alliance 2 bullet suppression and pinning mechanics to OpenXcom: near-miss bullets generate suppression points, reduce Time Units on the target's upcoming turn, cause morale shock, force standing units to dive/kneel into cover, and disrupt reaction fire."
+author: "Antigravity & User"
+
+master: xcom1

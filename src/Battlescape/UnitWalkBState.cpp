@@ -196,6 +196,36 @@ void UnitWalkBState::think()
 		// is the step finished?
 		if (_unit->getStatus() == STATUS_STANDING)
 		{
+			if (_parent->getMod()->isAcousticSimulationEnabled() && _parent->getTileEngine())
+			{
+				int vol;
+				if (_unit->isFloating() || _unit->getMovementType() == MT_FLY)
+				{
+					vol = _parent->getMod()->getNoiseMovementFly();
+				}
+				else if (_action.sneak)
+				{
+					vol = _parent->getMod()->getNoiseMovementSneak();
+				}
+				else if (_action.run)
+				{
+					vol = _parent->getMod()->getNoiseMovementRun();
+				}
+				else
+				{
+					vol = _parent->getMod()->getNoiseMovementWalk();
+				}
+
+				if (_unit->getArmor())
+				{
+					vol = (int)std::round(vol * _unit->getArmor()->getNoiseMovementFactor());
+				}
+
+				if (vol > 0)
+				{
+					_parent->getTileEngine()->makeNoise(_unit->getPosition(), vol, _unit, false);
+				}
+			}
 			// update the TU display
 			_parent->getSave()->getBattleState()->updateSoldierInfo();
 			// if the unit burns floor tiles, burn floor tiles as long as we're not falling

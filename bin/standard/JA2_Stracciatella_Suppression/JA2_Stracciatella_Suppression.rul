@@ -1,0 +1,61 @@
+# Jagged Alliance 2 Straciatella Suppression MOD for OpenXcom (OXCE)
+# Implements JA2 bullet suppression, pinning, and reaction disruption:
+# 1. 3D voxel near-miss trajectory detection
+# 2. Time Unit penalties on suppressed targets (up to 25% TU loss)
+# 3. Morale shock from incoming heavy fire
+# 4. Forced kneeling/diving into cover under sustained bursts
+# 5. Immediate disruption of reaction fire overwatch
+
+# Global Suppression Settings
+nearMissSuppression: true         # Generic 3D voxel near-miss bullet suppression hook
+tacticalSuppression: true         # Backward compatibility alias
+suppressionVisualFeedback: true   # Renders HitLog and combat text when pinned
+nearMissRadius: 1                 # Radius in tiles to register a near-miss
+suppressionRadius: 1              # Backward compatibility alias
+suppressionMaxTUPenalty: 25     # Maximum percentage of TUs lost to suppression
+suppressionMoraleLoss: 3        # Morale loss per suppression threshold
+suppressionKneelThreshold: 3    # Number of near-miss bullets required to force a standing unit to kneel
+
+items:
+  # Sidearms & Pistols (Light suppression)
+  - type: STR_PISTOL
+    suppressionFactor: 1
+
+  - type: STR_LASER_PISTOL
+    suppressionFactor: 1
+
+  - type: STR_PLASMA_PISTOL
+    suppressionFactor: 1
+
+  # Infantry Rifles (Medium suppression)
+  - type: STR_RIFLE
+    suppressionFactor: 2
+
+  - type: STR_LASER_RIFLE
+    suppressionFactor: 2
+
+  - type: STR_PLASMA_RIFLE
+    suppressionFactor: 2
+
+  # Heavy Weapons & Machine Guns (Devastating suppression & pinning)
+  - type: STR_HEAVY_CANNON
+    suppressionFactor: 4
+
+  - type: STR_AUTO_CANNON
+    suppressionFactor: 3
+
+  - type: STR_HEAVY_LASER
+    suppressionFactor: 4
+
+  - type: STR_HEAVY_PLASMA
+    suppressionFactor: 4
+
+  # Heavy Rockets
+  - type: STR_ROCKET_LAUNCHER
+    suppressionFactor: 5
+
+extraStrings:
+  - type: en-US
+    strings:
+      STR_PINNED_DOWN: "IS PINNED DOWN!"
+      STR_SUPPRESSED: "IS SUPPRESSED!"

@@ -90,6 +90,10 @@ public:
 	void setWasHitBy(BattleUnit *attacker);
 	/// Increases the walk abort counter.
 	void increaseWalkAbortCounter() { _walkAbortCounter++; }
+	/// Gets the count of visible enemies.
+	int getVisibleEnemies() const { return _visibleEnemies; }
+	/// Gets the count of known enemies.
+	int getKnownEnemies() const { return _knownEnemies; }
 	/// Sets the "unit picked up a weapon" flag.
 	void setWeaponPickedUp();
 	/// Gets whether the unit was hit.

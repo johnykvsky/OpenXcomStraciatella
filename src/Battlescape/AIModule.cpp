@@ -626,6 +626,7 @@ void AIModule::think(BattleAction *action)
 		action->run = _escapeAction.run;
 		// spin 180 at the end of your route.
 		_unit->setHiding(true);
+		action->kneel = _unit->getArmor()->allowsKneeling(false);
 		break;
 	case AI_PATROL:
 		_unit->setCharging(0);
@@ -648,6 +649,7 @@ void AIModule::think(BattleAction *action)
 		}
 		action->type = _patrolAction.type;
 		action->target = _patrolAction.target;
+		action->finalFacing = _patrolAction.finalFacing;
 		break;
 	case AI_COMBAT:
 		action->type = _attackAction.type;
@@ -741,6 +743,32 @@ bool AIModule::getWasHitBy(int attacker) const
 void AIModule::setupPatrol()
 {
 	_patrolAction.clearTU();
+
+	// Generic Acoustic Simulation: Investigate heard noise if suspicious (YELLOW) or alerted (RED)
+	if (_save->getMod()->isAcousticSimulationEnabled() && _unit->getNoiseTarget() != Position(-1, -1, -1))
+	{
+		Position nTarget = _unit->getNoiseTarget();
+		if (_unit->getPosition() == nTarget || Position::distance2d(_unit->getPosition(), nTarget) <= 1)
+		{
+			_unit->lookAt(nTarget);
+			_unit->setNoiseTarget(Position(-1, -1, -1));
+			_unit->setAlertStatus(ALERT_GREEN);
+		}
+		else
+		{
+			_patrolAction.actor = _unit;
+			_patrolAction.type = BA_WALK;
+			_patrolAction.target = nTarget;
+			_patrolAction.finalFacing = _save->getTileEngine()->getDirectionTo(_unit->getPosition(), nTarget);
+			if (_traceAI)
+			{
+				Log(LOG_INFO) << "AI Unit " << _unit->getId() << " investigating heard noise at ("
+				              << nTarget.x << "," << nTarget.y << "," << nTarget.z << ")";
+			}
+			return;
+		}
+	}
+
 	if (_toNode != 0 && _unit->getPosition() == _toNode->getPosition())
 	{
 		if (_traceAI)
@@ -1737,6 +1765,12 @@ int AIModule::scoreFiringMode(BattleAction *action, BattleUnit *target, bool che
 		accuracy = 0;
 	}
 
+	int noLOSAccuracyPenalty = weapon->getNoLOSAccuracyPenalty(_save->getMod());
+	if (noLOSAccuracyPenalty != -1 && !_save->getTileEngine()->visible(_unit, target->getTile()))
+	{
+		accuracy = accuracy * noLOSAccuracyPenalty / 100;
+	}
+
 	int numberOfShots = 1;
 	if (action->type == BA_AIMEDSHOT)
 	{
@@ -1880,6 +1914,29 @@ void AIModule::evaluateAIMode()
 	case AI_ESCAPE:
 		escapeOdds *= 1.1;
 		break;
+	}
+
+	// Generic Acoustic Simulation: Factor in alert status
+	if (_save->getMod()->isAcousticSimulationEnabled())
+	{
+		if (_unit->getAlertStatus() == ALERT_RED)
+		{
+			ambushOdds *= 1.8;
+			combatOdds *= 1.5;
+			patrolOdds *= 0.2;
+		}
+		else if (_unit->getAlertStatus() == ALERT_YELLOW)
+		{
+			patrolOdds *= 1.6;
+		}
+	}
+
+	// Generic Suppression: Suppressed units prioritize hard cover (ambush) and avoid reckless exposure
+	if (_save->getMod()->isNearMissSuppressionEnabled() && _unit->getSuppressionPoints() > 0)
+	{
+		ambushOdds *= 1.8;
+		combatOdds *= 0.6;
+		patrolOdds *= 0.3;
 	}
 
 	// take our overall health into consideration

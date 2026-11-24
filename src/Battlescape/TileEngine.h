@@ -197,6 +197,8 @@ public:
 	void hit(BattleActionAttack attack, Position center, int power, const RuleDamageType *type, bool rangeAtack = true, int terrainMeleeTilePart = 0);
 	/// Handles explosions.
 	void explode(BattleActionAttack attack, Position center, int power, const RuleDamageType *type, int maxRadius, bool rangeAtack = true);
+	/// Emits tactical noise that propagates to nearby units.
+	void makeNoise(const Position &source, int baseVolume, BattleUnit *emitter, bool isGunfireOrExplosion = false);
 	/// Checks if a destroyed tile starts an explosion.
 	Tile *checkForTerrainExplosions();
 	/// Unit opens door?

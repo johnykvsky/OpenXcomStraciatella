@@ -1,0 +1,9 @@
+# metadata.yml for Jagged Alliance 2 Straciatella Tactical
+
+name: "Jagged Alliance 2 Straciatella Tactical"
+id: ja2-stracciatella-tactical
+version: "1.0"
+description: "Brings Jagged Alliance 2 tactical ballistics and aiming mechanics to OpenXcom: eliminates Skyranger ramp-sniping with BVR/no-LOS penalties, adds weapon effective range dropoffs, simulates heavy weapon bipod deployment when kneeling, and adds precision/scoped aiming modes."
+author: "Antigravity & User"
+
+master: xcom1

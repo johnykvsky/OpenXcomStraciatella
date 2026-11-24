@@ -342,6 +342,23 @@ void ProjectileFlyBState::init()
 
 				if (!foundLoF)
 				{
+					// If Aim High enabled and Shift pressed, try targeting the head/upper level of the unit to clear low cover
+					if (_parent->getMod()->isAllowAimHigh() && _parent->getSave()->isShiftPressed(true))
+					{
+						BattleUnit *targetUnit = targetTile->getUnit();
+						int headZ = targetUnit ? (targetUnit->getHeight() > 0 ? targetUnit->getHeight() - 2 : 16) : 16;
+						_targetVoxel = targetTile->getPosition().toVoxel() + Position(8, 8, headZ);
+						std::vector<Position> trajectory;
+						int test = _parent->getTileEngine()->calculateLineVoxel(originVoxel, _targetVoxel, false, &trajectory, _unit);
+						if (test == V_UNIT || test == V_EMPTY)
+						{
+							foundLoF = true;
+						}
+					}
+				}
+
+				if (!foundLoF)
+				{
 					// Failed to find LOF
 					_action.relativeOrigin = BattleActionOrigin::CENTRE; // reset to the normal origin
 
@@ -350,6 +367,11 @@ void ProjectileFlyBState::init()
 					{
 						forceEnableObstacles = true;
 					}
+				}
+				else if (_parent->getMod()->isAllowAimHigh() && _parent->getSave()->isShiftPressed(true) && _unit->getFaction() == FACTION_PLAYER)
+				{
+					// Aim High: elevate target voxel slightly towards the upper section/head
+					_targetVoxel.z += _parent->getMod()->getAimHighElevationOffset();
 				}
 			}
 		}
@@ -452,6 +474,21 @@ bool ProjectileFlyBState::createNewProjectile()
 
 	// add the projectile on the map
 	_parent->getMap()->setProjectile(projectile);
+
+	// Emit gunfire noise
+	if (_parent->getMod()->isAcousticSimulationEnabled() && _parent->getTileEngine() && _action.actor)
+	{
+		int noiseVol = 35;
+		if (_action.weapon && _action.weapon->getRules())
+		{
+			int customNoise = _action.weapon->getRules()->getNoiseFire();
+			if (customNoise > 0)
+			{
+				noiseVol = customNoise;
+			}
+		}
+		_parent->getTileEngine()->makeNoise(_action.actor->getPosition(), noiseVol, _action.actor, true);
+	}
 
 	// set the speed of the state think cycle to 16 ms (roughly one think cycle per frame)
 	_parent->setStateInterval(1000/60);
@@ -677,12 +714,19 @@ void ProjectileFlyBState::think()
 
 				_parent->getMod()->getSoundByDepth(_parent->getDepth(), Mod::ITEM_DROP)->play(-1, _parent->getMap()->getSoundAngle(pos));
 				const RuleItem *ruleItem = _action.weapon->getRules();
-				if (_action.weapon->fuseThrowEvent())
+				if (_action.weapon->fuseThrowEvent() || (_parent->getMod()->isInteractiveReactionEnabled() && _parent->getMod()->isReactionImpactDetonation() && _action.reactionThrow && ruleItem->isGrenadeOrProxy()))
 				{
-					if (ruleItem->getBattleType() == BT_GRENADE || ruleItem->getBattleType() == BT_PROXIMITYGRENADE)
+					if (ruleItem->getBattleType() == BT_GRENADE)
 					{
-						// it's a hot grenade to explode immediately
+						// Option A: immediate detonation on landing (Cooked grenade / reaction throw)
 						_parent->statePushFront(new ExplosionBState(_parent, _parent->getMap()->getProjectile()->getLastPositions(Projectile::ItemDropVoxelOffset), attack));
+					}
+					else if (ruleItem->getBattleType() == BT_PROXIMITYGRENADE)
+					{
+						// Recommendation 3: Proximity Grenade arms instantly on the tile
+						_parent->dropItem(pos, _action.weapon);
+						_action.weapon->setFuseEnabled(true);
+						_action.weapon->setFuseTimer(0);
 					}
 					else
 					{

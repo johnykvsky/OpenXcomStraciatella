@@ -1,0 +1,9 @@
+# metadata.yml for Jagged Alliance 2 Straciatella Aliens
+
+name: "Jagged Alliance 2 Straciatella Aliens"
+id: ja2-stracciatella-aliens
+version: "1.0"
+description: "Rebalances UFO Defense enemies for Jagged Alliance 2 Stracciatella: asymmetrical night vision tiers, thermal and psionic senses, suppression immunities, acoustic stealth and hearing acuity, and spotter/sniper AI roles."
+author: "Antigravity & User"
+
+master: xcom1

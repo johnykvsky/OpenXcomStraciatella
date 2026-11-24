@@ -1,0 +1,18 @@
+# =========================================================================
+# Jagged Alliance 2 Straciatella Reaction MOD for Terror from the Deep
+# =========================================================================
+
+interactiveReaction: true
+tacticalReaction: true
+reactionAIModeSelection: true
+reactionAutoRange: 6
+reactionAimedRange: 15
+reactionImpactDetonation: true
+reactionGrenadeImmediateDetonation: true
+reactionAllowBeltGrenade: true
+reactionAllowPass: true
+
+extraStrings:
+  - type: en-US
+    strings:
+      STR_INTERRUPT: "REACTION INTERRUPT!"

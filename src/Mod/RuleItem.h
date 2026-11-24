@@ -458,7 +458,7 @@ private:
 	int _manaExperience;
 	int _loadOrder;
 	int _listOrder, _maxRange, _minRange, _dropoff, _bulletSpeed, _explosionSpeed, _shotgunPellets;
-	int _shotgunBehaviorType, _shotgunSpread, _shotgunChoke;
+	int _shotgunBehaviorType, _shotgunSpread, _shotgunChoke, _noiseFire, _suppressionFactor, _visibilityAtDarkBonus;
 
 	std::map<std::string, std::string> _zombieUnitByArmorMale, _zombieUnitByArmorFemale, _zombieUnitByType;
 	std::string _zombieUnit, _spawnUnitName, _spawnItemName;
@@ -738,7 +738,7 @@ public:
 	/// Gets the item's close quarters combat accuracy.
 	int getAccuracyCloseQuarters(const Mod *mod) const;
 	/// Get penalty for firing this weapon on out-of-LOS targets
-	int getNoLOSAccuracyPenalty(Mod *mod) const;
+	int getNoLOSAccuracyPenalty(const Mod *mod) const;
 	/// Get setting for primed explosives exploding in the inventory.
 	int getExplodeInventory(const Mod* mod) const;
 
@@ -973,6 +973,12 @@ public:
 	int getShotgunPellets() const;
 	/// Get the shotgun behavior type.
 	int getShotgunBehaviorType() const;
+	/// Get gunfire noise emission volume.
+	int getNoiseFire() const { return _noiseFire; }
+	/// Get suppression power factor per bullet.
+	int getSuppressionFactor() const { return _suppressionFactor; }
+	/// Get dark vision bonus granted by this item.
+	int getVisibilityAtDarkBonus() const { return _visibilityAtDarkBonus; }
 	/// Get the spread of shotgun projectiles.
 	int getShotgunSpread() const;
 	/// Get the shotgun choke value.

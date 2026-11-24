@@ -63,6 +63,13 @@ class AIModule;
 template<typename, typename...> class ScriptContainer;
 template<typename, typename...> class ScriptParser;
 class ScriptWorkerBlit;
+
+enum AlertStatus
+{
+	ALERT_GREEN = 0,
+	ALERT_YELLOW = 1,
+	ALERT_RED = 2
+};
 struct BattleUnitStatistics;
 struct StatAdjustment;
 
@@ -88,6 +95,7 @@ class BattleUnit
 private:
 	static const int SPEC_WEAPON_MAX = 4;
 
+	const Mod* _mod;
 	UnitFaction _faction, _originalFaction;
 	UnitFaction _killedBy;
 	UnitFaction _spawnUnitFaction = FACTION_HOSTILE;
@@ -192,6 +200,11 @@ private:
 	bool _vip;
 	bool _bannedInNextStage;
 	bool _skillMenuCheck;
+	AlertStatus _alertStatus;
+	Position _noiseTarget;
+	int _noiseVolume;
+	int _alertTurns;
+	int _suppressionPoints;
 	ScriptValues<BattleUnit> _scriptValues;
 
 	/// Calculate stat improvement.
@@ -721,6 +734,20 @@ public:
 	void incTurnsSinceStunned() { _turnsSinceStunned = std::min(255, _turnsSinceStunned + 1); }
 	/// Return how many turns passed since stunned last time.
 	int getTurnsSinceStunned() const { return _turnsSinceStunned; }
+
+	/// Tactical Acoustics / Awareness Alert Status
+	AlertStatus getAlertStatus() const { return _alertStatus; }
+	void setAlertStatus(AlertStatus status) { _alertStatus = status; }
+	Position getNoiseTarget() const { return _noiseTarget; }
+	void setNoiseTarget(Position pos) { _noiseTarget = pos; }
+	int getNoiseVolume() const { return _noiseVolume; }
+	void setNoiseVolume(int vol) { _noiseVolume = vol; }
+	void hearNoise(const Position& source, int volume, AlertStatus alertTrigger);
+
+	/// Tactical Suppression
+	int getSuppressionPoints() const { return _suppressionPoints; }
+	void addSuppression(int points, BattleUnit* firer, SavedBattleGame* save = nullptr);
+	const Mod* getMod() const { return _mod; }
 
 	/// Get this unit's original faction
 	UnitFaction getOriginalFaction() const;

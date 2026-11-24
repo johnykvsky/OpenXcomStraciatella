@@ -1,0 +1,23 @@
+# Jagged Alliance 2 Straciatella Reaction MOD for OpenXcom (OXCE)
+# Implements JA2 interactive interrupts & tactical reaction fire:
+# 1. Interactive player modal prompt: choose Snap, Auto Burst, Aimed Shot, Throw Grenade, or Hold Fire
+# 2. Strict physical inventory check: grenades in hand or quick-draw belt (requires 1 free hand)
+# 3. Option A "Cooked Grenade": reaction thrown grenades detonate immediately upon landing
+# 4. Immediate smoke deployment: smoke grenades instantly burst into smoke cover on impact
+# 5. Immediate proximity arming: proximity grenades arm instantly on the tile
+# 6. Intelligent alien reaction AI: Auto bursts in close quarters (<= 6 tiles) and Aimed shots at sniper range (>= 15 tiles)
+
+interactiveReaction: true                # Generic interactive reaction interrupt hook
+tacticalReaction: true                   # Backward compatibility alias
+reactionAIModeSelection: true            # Dynamic reaction fire mode selection for AI
+reactionAutoRange: 6
+reactionAimedRange: 15
+reactionImpactDetonation: true           # Immediate impact detonation for reaction thrown grenades (Option A)
+reactionGrenadeImmediateDetonation: true
+reactionAllowBeltGrenade: true
+reactionAllowPass: true
+
+extraStrings:
+  - type: en-US
+    strings:
+      STR_INTERRUPT: "REACTION INTERRUPT!"

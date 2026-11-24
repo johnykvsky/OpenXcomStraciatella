@@ -1,0 +1,60 @@
+# =========================================================================
+# Jagged Alliance 2 Straciatella Suppression MOD for Terror from the Deep
+# =========================================================================
+
+# Global Suppression Settings
+nearMissSuppression: true
+tacticalSuppression: true
+suppressionVisualFeedback: true
+nearMissRadius: 1
+suppressionMaxTUPenalty: 25
+suppressionMoraleLoss: 3
+suppressionKneelThreshold: 3
+
+# Weapon Suppression Factors (TFTD)
+items:
+  # Sidearms & Pistols
+  - type: STR_DART_PISTOL
+    suppressionFactor: 1
+
+  - type: STR_GAUSS_PISTOL
+    suppressionFactor: 1
+
+  - type: STR_SONIC_PISTOL
+    suppressionFactor: 1
+
+  # Infantry Harpoons & Rifles
+  - type: STR_JET_HARPOON
+    suppressionFactor: 2
+
+  - type: STR_GAUSS_RIFLE
+    suppressionFactor: 2
+
+  - type: STR_SONIC_BLASTA_RIFLE
+    suppressionFactor: 2
+
+  # Heavy Cannons & Support Weapons
+  - type: STR_GAS_CANNON
+    suppressionFactor: 4
+
+  - type: STR_HYDRO_JET_CANNON
+    suppressionFactor: 3
+
+  - type: STR_HEAVY_GAUSS
+    suppressionFactor: 4
+
+  - type: STR_SONIC_CANNON
+    suppressionFactor: 5
+
+  # Heavy Torpedoes & Launchers
+  - type: STR_TORPEDO_LAUNCHER
+    suppressionFactor: 5
+
+  - type: STR_DISRUPTOR_PULSE_LAUNCHER
+    suppressionFactor: 5
+
+extraStrings:
+  - type: en-US
+    strings:
+      STR_PINNED_DOWN: "IS PINNED DOWN!"
+      STR_SUPPRESSED: "IS SUPPRESSED!"

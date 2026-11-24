@@ -1,0 +1,59 @@
+# Jagged Alliance 2 Straciatella Awareness MOD for OpenXcom (OXCE)
+# Implements JA2 auditory awareness and multi-tier alert hierarchy:
+# 1. Real-time tactical acoustic propagation through walls and doors
+# 2. Footstep, door, weapon fire, and explosion sound emission
+# 3. Dynamic alert states: STATUS_GREEN (Patrol), STATUS_YELLOW (Suspicious/Investigate), STATUS_RED (Combat)
+
+# Global Acoustic Parameters
+acousticSimulation: true          # Generic acoustic simulation pipeline hook
+tacticalAcoustics: true           # Backward compatibility alias
+peripheralVision: true            # Enables realistic ~180 degree peripheral vision arc
+peripheralVisionRatio: 0.5        # Peripheral detection range ratio (50% of normal vision)
+acousticWallAttenuation: 10       # Sound loss when penetrating solid structural walls
+acousticDoorAttenuation: 6        # Sound loss when penetrating doors
+noiseMovementWalk: 6              # Walking footstep noise radius in tiles
+noiseMovementRun: 14              # Running footstep noise radius in tiles
+noiseMovementSneak: 1             # Alt-key sneaking footstep noise radius in tiles
+noiseMovementFly: 0               # Airborne anti-grav flight / hovering noise radius in tiles
+noiseDoorOpen: 4                  # Subtle door creak noise radius in tiles
+noiseDoorSmash: 15                # Forced door noise radius in tiles
+noiseExplosion: 55                # High explosive blast noise radius in tiles
+
+# Weapon Gunfire Acoustic Profiles
+items:
+  # Sidearms & Pistols (Shorter acoustic signature)
+  - type: STR_PISTOL
+    noiseFire: 25
+
+  - type: STR_LASER_PISTOL
+    noiseFire: 20
+
+  - type: STR_PLASMA_PISTOL
+    noiseFire: 25
+
+  # Infantry Rifles (Medium report)
+  - type: STR_RIFLE
+    noiseFire: 35
+
+  - type: STR_LASER_RIFLE
+    noiseFire: 25
+
+  - type: STR_PLASMA_RIFLE
+    noiseFire: 35
+
+  # Heavy Cannons & Support Weapons (Thunderous report)
+  - type: STR_HEAVY_CANNON
+    noiseFire: 45
+
+  - type: STR_AUTO_CANNON
+    noiseFire: 45
+
+  - type: STR_HEAVY_LASER
+    noiseFire: 35
+
+  - type: STR_HEAVY_PLASMA
+    noiseFire: 45
+
+  # Explosive Launchers (Massive acoustic footprint)
+  - type: STR_ROCKET_LAUNCHER
+    noiseFire: 50

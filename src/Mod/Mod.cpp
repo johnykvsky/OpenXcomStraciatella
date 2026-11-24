@@ -438,6 +438,16 @@ Mod::Mod() :
 	_kneelBonusGlobal(115), _oneHandedPenaltyGlobal(80),
 	_enableCloseQuartersCombat(0), _closeQuartersAccuracyGlobal(100), _closeQuartersTuCostGlobal(12), _closeQuartersEnergyCostGlobal(8), _closeQuartersSneakUpGlobal(0),
 	_noLOSAccuracyPenaltyGlobal(-1),
+	_allowAimHigh(false), _aimHighAccuracyPenalty(15), _aimHighElevationOffset(6), _visualLOFIndicator(false),
+	_rangeVisualCursorTags(false),
+	_acousticSimulation(false), _acousticBlipDuration(2), _acousticWallAttenuation(10), _acousticDoorAttenuation(6),
+	_noiseMovementWalk(6), _noiseMovementRun(14), _noiseMovementSneak(1), _noiseMovementFly(0), _noiseDoorOpen(4), _noiseDoorSmash(15), _noiseExplosion(55),
+	_peripheralVision(false), _peripheralVisionRatio(0.5),
+	_burstRecoil(false), _burstRecoilPenalty(15), _burstElevationClimb(1),
+	_symmetricalNightVision(false), _playerBaseViewDistanceAtDark(9),
+	_nearMissSuppression(false), _suppressionVisualFeedback(false), _nearMissRadius(1), _suppressionMaxTUPenalty(25), _suppressionMoraleLoss(3), _suppressionKneelThreshold(3),
+	_interactiveReaction(false), _reactionAIModeSelection(false), _reactionAutoRange(6), _reactionAimedRange(15),
+	_reactionImpactDetonation(true), _reactionAllowBeltGrenade(true), _reactionAllowPass(true),
 	_explodeInventoryGlobal(0),
 	_surrenderMode(0),
 	_bughuntMinTurn(999), _bughuntMaxEnemies(2), _bughuntRank(0), _bughuntLowMorale(40), _bughuntTimeUnitsLeft(60),
@@ -3289,6 +3299,54 @@ void Mod::loadFile(const FileMap::FileRecord &filerec, ModScript &parsers)
 	reader.tryRead("closeQuartersEnergyCostGlobal", _closeQuartersEnergyCostGlobal);
 	reader.tryRead("closeQuartersSneakUpGlobal", _closeQuartersSneakUpGlobal);
 	reader.tryRead("noLOSAccuracyPenaltyGlobal", _noLOSAccuracyPenaltyGlobal);
+
+	reader.tryRead("allowAimHigh", _allowAimHigh);
+	reader.tryRead("aimHighAccuracyPenalty", _aimHighAccuracyPenalty);
+	reader.tryRead("aimHighElevationOffset", _aimHighElevationOffset);
+	reader.tryRead("visualLOFIndicator", _visualLOFIndicator);
+	reader.tryRead("rangeVisualCursorTags", _rangeVisualCursorTags);
+
+	reader.tryRead("acousticSimulation", _acousticSimulation);
+	reader.tryRead("tacticalAcoustics", _acousticSimulation);
+	reader.tryRead("acousticBlipDuration", _acousticBlipDuration);
+	reader.tryRead("acousticWallAttenuation", _acousticWallAttenuation);
+	reader.tryRead("acousticDoorAttenuation", _acousticDoorAttenuation);
+	reader.tryRead("noiseMovementWalk", _noiseMovementWalk);
+	reader.tryRead("noiseMovementRun", _noiseMovementRun);
+	reader.tryRead("noiseMovementSneak", _noiseMovementSneak);
+	reader.tryRead("noiseMovementFly", _noiseMovementFly);
+	reader.tryRead("noiseDoorOpen", _noiseDoorOpen);
+	reader.tryRead("noiseDoorSmash", _noiseDoorSmash);
+	reader.tryRead("noiseExplosion", _noiseExplosion);
+
+	reader.tryRead("peripheralVision", _peripheralVision);
+	reader.tryRead("peripheralVisionRatio", _peripheralVisionRatio);
+
+	reader.tryRead("burstRecoil", _burstRecoil);
+	reader.tryRead("burstRecoilPenalty", _burstRecoilPenalty);
+	reader.tryRead("burstElevationClimb", _burstElevationClimb);
+
+	reader.tryRead("symmetricalNightVision", _symmetricalNightVision);
+	reader.tryRead("playerBaseViewDistanceAtDark", _playerBaseViewDistanceAtDark);
+
+	reader.tryRead("nearMissSuppression", _nearMissSuppression);
+	reader.tryRead("tacticalSuppression", _nearMissSuppression);
+	reader.tryRead("suppressionVisualFeedback", _suppressionVisualFeedback);
+	reader.tryRead("nearMissRadius", _nearMissRadius);
+	reader.tryRead("suppressionRadius", _nearMissRadius);
+	reader.tryRead("suppressionMaxTUPenalty", _suppressionMaxTUPenalty);
+	reader.tryRead("suppressionMoraleLoss", _suppressionMoraleLoss);
+	reader.tryRead("suppressionKneelThreshold", _suppressionKneelThreshold);
+
+	reader.tryRead("interactiveReaction", _interactiveReaction);
+	reader.tryRead("tacticalReaction", _interactiveReaction);
+	reader.tryRead("reactionAIModeSelection", _reactionAIModeSelection);
+	reader.tryRead("reactionAutoRange", _reactionAutoRange);
+	reader.tryRead("reactionAimedRange", _reactionAimedRange);
+	reader.tryRead("reactionImpactDetonation", _reactionImpactDetonation);
+	reader.tryRead("reactionGrenadeImmediateDetonation", _reactionImpactDetonation);
+	reader.tryRead("reactionAllowBeltGrenade", _reactionAllowBeltGrenade);
+	reader.tryRead("reactionAllowPass", _reactionAllowPass);
 	reader.tryRead("explodeInventoryGlobal", _explodeInventoryGlobal);
 	reader.tryRead("surrenderMode", _surrenderMode);
 	reader.tryRead("bughuntMinTurn", _bughuntMinTurn);

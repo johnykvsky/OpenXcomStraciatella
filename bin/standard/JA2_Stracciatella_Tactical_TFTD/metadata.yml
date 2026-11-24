@@ -1,0 +1,9 @@
+# metadata.yml for Jagged Alliance 2 Straciatella Tactical (TFTD)
+
+name: "Jagged Alliance 2 Straciatella Tactical (TFTD)"
+id: ja2-stracciatella-tactical-tftd
+version: "1.0"
+description: "Brings Jagged Alliance 2 tactical ballistics and aiming mechanics to Terror from the Deep: eliminates ramp-sniping with BVR penalties, adds weapon effective range dropoffs, simulates heavy weapon bipod deployment when kneeling, and adds precision aiming modes."
+author: "Antigravity & User"
+
+master: xcom2

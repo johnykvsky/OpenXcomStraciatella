@@ -1,0 +1,9 @@
+# metadata.yml for Jagged Alliance 2 Straciatella Reaction (TFTD)
+
+name: "Jagged Alliance 2 Straciatella Reaction (TFTD)"
+id: ja2-stracciatella-reaction-tftd
+version: "1.0"
+description: "Brings Jagged Alliance 2 interactive interrupts, tactical weapon mode selection, cooked grenades, and smart AI reaction fire to Terror from the Deep."
+author: "Antigravity & User"
+
+master: xcom2

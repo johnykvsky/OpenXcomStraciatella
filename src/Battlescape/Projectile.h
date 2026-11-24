@@ -68,6 +68,8 @@ public:
 	/// Calculates the trajectory for a straight path.
 	int calculateTrajectory(double accuracy);
 	int calculateTrajectory(double accuracy, const Position& originVoxel, bool excludeUnit = true);
+	/// Applies suppression points to units near the bullet path.
+	void applySuppression();
 	/// Calculates the trajectory for a curved path.
 	int calculateThrow(double accuracy);
 	/// Moves the projectile one step in its trajectory.

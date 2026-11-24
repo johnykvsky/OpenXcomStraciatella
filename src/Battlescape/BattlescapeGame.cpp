@@ -447,6 +447,14 @@ void BattlescapeGame::handleAI(BattleUnit *unit)
 
 	if (action.type == BA_NONE)
 	{
+		// End-of-turn defensive kneeling: if unit can kneel and is alerted/in combat, take a knee behind cover
+		if (!unit->isKneeled() && unit->getArmor()->allowsKneeling(unit->getType() == "SOLDIER") && !unit->isFloating()
+			&& unit->getTimeUnits() >= unit->getKneelChangeCost()
+			&& (unit->getAlertStatus() != ALERT_GREEN || (unit->getAIModule() && (unit->getAIModule()->getVisibleEnemies() > 0 || unit->getAIModule()->getKnownEnemies() > 0))))
+		{
+			kneel(unit);
+		}
+
 		_parentState->debug("Idle");
 		_AIActionCounter = 0;
 		if (_save->selectNextPlayerUnit(true, _AISecondMove) == 0)

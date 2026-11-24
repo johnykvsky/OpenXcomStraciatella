@@ -38,10 +38,12 @@
 #include "../Mod/Mod.h"
 #include "../Mod/Armor.h"
 #include "../Mod/RuleSkill.h"
+#include "../Mod/RuleInventory.h"
 #include "Pathfinding.h"
 #include "../Engine/Options.h"
 #include "ProjectileFlyBState.h"
 #include "MeleeAttackBState.h"
+#include "InteractiveReactionBState.h"
 #include "../fmath.h"
 
 namespace OpenXcom
@@ -2796,7 +2798,82 @@ TileEngine::ReactionScore TileEngine::determineReactionType(BattleUnit *unit, Ba
 				weapon->getAmmoForAction(BA_SNAPSHOT) &&
 				BattleActionCost(BA_SNAPSHOT, unit, weapon).haveTU())
 			{
+				if (_save->getBattleGame()->getMod()->isInteractiveReactionEnabled() && _save->getBattleGame()->getMod()->isReactionAIModeSelection() && !isPlayer)
+				{
+					int distSq = unit->distance3dToUnitSq(target);
+					int autoDist = _save->getBattleGame()->getMod()->getReactionAutoRange();
+					int aimedDist = _save->getBattleGame()->getMod()->getReactionAimedRange();
+					if (distSq <= autoDist * autoDist && _save->canUseWeapon(weapon, unit, false, BA_AUTOSHOT) &&
+						weapon->getAmmoForAction(BA_AUTOSHOT) &&
+						BattleActionCost(BA_AUTOSHOT, unit, weapon).haveTU())
+					{
+						setReaction(reaction, BA_AUTOSHOT, weapon);
+						return reaction;
+					}
+					else if (distSq >= aimedDist * aimedDist && _save->canUseWeapon(weapon, unit, false, BA_AIMEDSHOT) &&
+						weapon->getAmmoForAction(BA_AIMEDSHOT) &&
+						BattleActionCost(BA_AIMEDSHOT, unit, weapon).haveTU())
+					{
+						setReaction(reaction, BA_AIMEDSHOT, weapon);
+						return reaction;
+					}
+				}
 				setReaction(reaction, BA_SNAPSHOT, weapon);
+				return reaction;
+			}
+		}
+	}
+
+	if (_save->getBattleGame()->getMod()->isInteractiveReactionEnabled() && isPlayer)
+	{
+		BattleItem* grenade = nullptr;
+		bool fromBelt = false;
+		for (auto* bi : *unit->getInventory())
+		{
+			if (bi->getRules()->isGrenadeOrProxy())
+			{
+				auto* slot = bi->getSlot();
+				if (slot && (slot->isRightHand() || slot->isLeftHand()))
+				{
+					grenade = bi;
+					break;
+				}
+			}
+		}
+		if (!grenade && _save->getBattleGame()->getMod()->isReactionAllowBeltGrenade())
+		{
+			bool hasFreeHand = (unit->getRightHandWeapon() == nullptr || unit->getLeftHandWeapon() == nullptr);
+			if (hasFreeHand)
+			{
+				for (auto* bi : *unit->getInventory())
+				{
+					if (bi->getRules()->isGrenadeOrProxy())
+					{
+						auto* slot = bi->getSlot();
+						if (slot && slot->getId() == "STR_BELT")
+						{
+							grenade = bi;
+							fromBelt = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+		if (grenade)
+		{
+			int cost = 0;
+			if (fromBelt) cost += 8;
+			if (!grenade->isFuseEnabled() || grenade->getFuseTimer() < 0) cost += 15;
+			BattleAction throwAct;
+			throwAct.actor = unit;
+			throwAct.weapon = grenade;
+			throwAct.type = BA_THROW;
+			throwAct.updateTU();
+			cost += throwAct.Time;
+			if (unit->getTimeUnits() >= cost)
+			{
+				setReaction(reaction, BA_THROW, grenade);
 				return reaction;
 			}
 		}
@@ -2829,7 +2906,7 @@ bool TileEngine::tryReaction(ReactionScore *reaction, BattleUnit *target, const 
 
 	auto* unit = action.actor;
 	auto* ammo = action.weapon->getAmmoForAction(action.type);
-	if (ammo && action.haveTU())
+	if ((ammo || action.type == BA_THROW) && (action.type == BA_THROW || action.haveTU()))
 	{
 		action.targeting = true;
 
@@ -2844,7 +2921,7 @@ bool TileEngine::tryReaction(ReactionScore *reaction, BattleUnit *target, const 
 				unit->setAIModule(ai);
 			}
 
-			int radius = ammo->getRules()->getExplosionRadius({ action.type, action.actor, action.weapon, ammo });
+			int radius = ammo ? ammo->getRules()->getExplosionRadius({ action.type, action.actor, action.weapon, ammo }) : action.weapon->getRules()->getExplosionRadius({ action.type, action.actor, action.weapon, nullptr });
 			if (action.type != BA_HIT && radius > 0 &&
 				ai->explosiveEfficacy(action.target, unit, radius, -1) == 0)
 			{
@@ -2882,7 +2959,14 @@ bool TileEngine::tryReaction(ReactionScore *reaction, BattleUnit *target, const 
 				}
 				else
 				{
-					_save->getBattleGame()->statePushBack(new ProjectileFlyBState(_save->getBattleGame(), action));
+					if (_save->getBattleGame()->getMod()->isInteractiveReactionEnabled() && unit->getFaction() == FACTION_PLAYER)
+					{
+						_save->getBattleGame()->statePushBack(new InteractiveReactionBState(_save->getBattleGame(), action, target));
+					}
+					else
+					{
+						_save->getBattleGame()->statePushBack(new ProjectileFlyBState(_save->getBattleGame(), action));
+					}
 				}
 				return true;
 			}
@@ -3330,6 +3414,7 @@ void TileEngine::hit(BattleActionAttack attack, Position center, int power, cons
 void TileEngine::explode(BattleActionAttack attack, Position center, int power, const RuleDamageType *type, int maxRadius, bool rangeAtack)
 {
 	const Position centetTile = center.toTile();
+	makeNoise(centetTile, _save->getMod()->getNoiseExplosion(), attack.attacker, true);
 	int hitSide = 0;
 	int diagonalWall = 0;
 	int power_;
@@ -4215,6 +4300,7 @@ int TileEngine::unitOpensDoor(BattleUnit *unit, bool rClick, int dir)
 				calculateLighting(LL_FIRE, doorCentre, doorsOpened, true);
 				// Update FOV through the doorway.
 				calculateFOV(doorCentre, doorsOpened, true, true);
+				makeNoise(doorCentre, _save->getMod()->getNoiseDoorOpen(), unit, false);
 			}
 			else return 4;
 		}
@@ -6047,6 +6133,82 @@ void TileEngine::updateGameStateAfterScript(BattleActionAttack battleActionAttac
 		// limit area of the following calls to the Position pos
 		calculateLighting(LL_ITEMS, pos, 2, true);
 		calculateFOV(pos, 1, false);
+	}
+}
+
+/**
+ * Emits tactical noise that propagates to nearby units.
+ * @param source Position of the sound in tile space.
+ * @param baseVolume Base volume of the sound.
+ * @param emitter The unit that generated the noise.
+ * @param isGunfireOrExplosion True if the sound is combat gunfire or explosion.
+ */
+void TileEngine::makeNoise(const Position &source, int baseVolume, BattleUnit *emitter, bool isGunfireOrExplosion)
+{
+	if (!_save->getMod()->isAcousticSimulationEnabled() || baseVolume <= 0)
+	{
+		return;
+	}
+
+	UnitFaction emitterFaction = emitter ? emitter->getFaction() : FACTION_PLAYER;
+
+	for (auto* bu : *_save->getUnits())
+	{
+		if (bu->isOut() || bu == emitter)
+		{
+			continue;
+		}
+
+		// Friendly movement does not trigger alert status on teammates
+		if (!isGunfireOrExplosion && emitter && bu->getFaction() == emitterFaction)
+		{
+			continue;
+		}
+
+		Position targetPos = bu->getPosition();
+		int dist = Position::distance2d(source, targetPos);
+		int hearingBonus = bu->getArmor() ? bu->getArmor()->getHearingBonus() : 0;
+		if (dist > baseVolume + hearingBonus)
+		{
+			continue;
+		}
+
+		// Calculate acoustic attenuation through walls and doors
+		int attenuation = 0;
+		int wallCost = _save->getMod()->getAcousticWallAttenuation();
+		int doorCost = _save->getMod()->getAcousticDoorAttenuation();
+
+		std::vector<Position> trajectory;
+		calculateLineTile(source, targetPos, trajectory);
+		for (const auto& p : trajectory)
+		{
+			Tile* t = _save->getTile(p);
+			if (t)
+			{
+				if (t->isDoor(O_WESTWALL) || t->isDoor(O_NORTHWALL) || t->isUfoDoor(O_WESTWALL) || t->isUfoDoor(O_NORTHWALL))
+				{
+					attenuation += doorCost;
+				}
+				else if (t->getMapData(O_NORTHWALL) != 0 || t->getMapData(O_WESTWALL) != 0)
+				{
+					attenuation += wallCost;
+				}
+			}
+			if (attenuation >= baseVolume + hearingBonus) break;
+		}
+
+		int effVolume = baseVolume + hearingBonus - dist - attenuation;
+		if (effVolume > 0)
+		{
+			AlertStatus trigger = isGunfireOrExplosion ? ALERT_RED : ALERT_YELLOW;
+			bu->hearNoise(source, effVolume, trigger);
+			if (Options::traceAI)
+			{
+				Log(LOG_INFO) << "Unit " << bu->getId() << " heard noise from ("
+				              << source.x << "," << source.y << "," << source.z
+				              << ") with effVolume=" << effVolume << " alert=" << (int)trigger;
+			}
+		}
 	}
 }
 

@@ -76,7 +76,7 @@ private:
 	bool _isTFTD;
 	Surface *_arrow;
 	Surface *_stunIndicator, *_woundIndicator, *_burnIndicator, *_shockIndicator;
-	bool _anyIndicator, _isAltPressed, _isCtrlPressed;
+	bool _anyIndicator, _isAltPressed, _isCtrlPressed, _isShiftPressed;
 	int _spriteWidth, _spriteHeight;
 	int _selectorX, _selectorY;
 	int _mouseX, _mouseY;
@@ -84,8 +84,10 @@ private:
 	int _cursorSize;
 	int _cacheActiveWeaponUfopediaArticleUnlocked; // -1 = unknown, 0 = locked, 1 = unlocked
 	bool _cacheIsCtrlPressed;
+	bool _cacheIsShiftPressed;
 	Position _cacheCursorPosition;
 	int _cacheHasLOS; // -1 = unknown, 0 = no LOS, 1 = has LOS
+	int _cacheHasLOF; // -1 = unknown, 0 = no LOF, 1 = has LOF
 	int _animFrame;
 	Projectile *_projectile;
 	bool _followProjectile;

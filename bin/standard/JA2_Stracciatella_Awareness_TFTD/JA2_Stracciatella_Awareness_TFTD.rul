@@ -1,0 +1,60 @@
+# =========================================================================
+# Jagged Alliance 2 Straciatella Awareness MOD for Terror from the Deep
+# =========================================================================
+
+# Global Acoustic Parameters
+acousticSimulation: true
+tacticalAcoustics: true
+peripheralVision: true
+peripheralVisionRatio: 0.5
+acousticWallAttenuation: 10
+acousticDoorAttenuation: 6
+noiseMovementWalk: 6
+noiseMovementRun: 14
+noiseMovementSneak: 1
+noiseMovementFly: 0
+noiseDoorOpen: 4
+noiseDoorSmash: 15
+noiseExplosion: 55
+
+# Weapon Gunfire Acoustic Profiles (TFTD)
+items:
+  # Sidearms & Pistols
+  - type: STR_DART_PISTOL
+    noiseFire: 20
+
+  - type: STR_GAUSS_PISTOL
+    noiseFire: 25
+
+  - type: STR_SONIC_PISTOL
+    noiseFire: 25
+
+  # Infantry Harpoons & Rifles
+  - type: STR_JET_HARPOON
+    noiseFire: 25
+
+  - type: STR_GAUSS_RIFLE
+    noiseFire: 30
+
+  - type: STR_SONIC_BLASTA_RIFLE
+    noiseFire: 35
+
+  # Heavy Cannons & Support Weapons
+  - type: STR_GAS_CANNON
+    noiseFire: 45
+
+  - type: STR_HYDRO_JET_CANNON
+    noiseFire: 45
+
+  - type: STR_HEAVY_GAUSS
+    noiseFire: 40
+
+  - type: STR_SONIC_CANNON
+    noiseFire: 50
+
+  # Heavy Torpedoes & Launchers
+  - type: STR_TORPEDO_LAUNCHER
+    noiseFire: 50
+
+  - type: STR_DISRUPTOR_PULSE_LAUNCHER
+    noiseFire: 55

@@ -105,7 +105,7 @@ namespace OpenXcom
  * @param visibleMapHeight Current visible map height.
  */
 Map::Map(Game *game, int width, int height, int x, int y, int visibleMapHeight) : InteractiveSurface(width, height, x, y),
-	_game(game), _isTFTD(false), _arrow(0), _anyIndicator(false), _isAltPressed(false), _isCtrlPressed(false),
+	_game(game), _isTFTD(false), _arrow(0), _anyIndicator(false), _isAltPressed(false), _isCtrlPressed(false), _isShiftPressed(false),
 	_selectorX(0), _selectorY(0), _mouseX(0), _mouseY(0), _cursorType(CT_NORMAL), _cursorSize(1), _animFrame(0),
 	_projectile(0), _followProjectile(true), _projectileInFOV(false), _explosionInFOV(false), _launch(false), _visibleMapHeight(visibleMapHeight),
 	_unitDying(false), _smoothingEngaged(false), _flashScreen(false), _bgColor(15), _projectileSet(0), _showObstacles(false), _showInfoOnCursor(false)
@@ -170,16 +170,18 @@ Map::Map(Game *game, int width, int height, int x, int y, int visibleMapHeight) 
 	_obstacleTimer->stop();
 	_obstacleTimer->onTimer((SurfaceHandler)&Map::disableObstacles);
 
-	_showInfoOnCursor = (Options::oxceShowAccuracyOnCrosshair == 1 && Options::battleUFOExtenderAccuracy) || Options::oxceShowAccuracyOnCrosshair == 2;
-	_txtAccuracy = new Text(44, 18, 0, 0);
+	_showInfoOnCursor = (Options::oxceShowAccuracyOnCrosshair == 1 && Options::battleUFOExtenderAccuracy) || Options::oxceShowAccuracyOnCrosshair == 2 || _save->getMod()->isRangeVisualCursorTagsEnabled() || _save->getMod()->isVisualLOFIndicator();
+	_txtAccuracy = new Text(160, 24, 0, 0);
 	_txtAccuracy->setSmall();
 	_txtAccuracy->setPalette(_game->getScreen()->getPalette());
 	_txtAccuracy->setHighContrast(true);
 	_txtAccuracy->initText(_game->getMod()->getFont("FONT_BIG"), _game->getMod()->getFont("FONT_SMALL"), _game->getLanguage());
 	_cacheActiveWeaponUfopediaArticleUnlocked = -1;
 	_cacheIsCtrlPressed = false;
+	_cacheIsShiftPressed = false;
 	_cacheCursorPosition = TileEngine::invalid;
 	_cacheHasLOS = -1;
+	_cacheHasLOF = -1;
 
 	_nightVisionOn = false;
 	if (Options::oxceToggleNightVisionType == 2)
@@ -738,6 +740,7 @@ void Map::drawTerrain(Surface *surface)
 {
 	_isAltPressed = _game->isAltPressed(true);
 	_isCtrlPressed = _game->isCtrlPressed(true);
+	_isShiftPressed = _game->isShiftPressed(true);
 	int frameNumber = 0;
 	SurfaceRaw<const Uint8> tmpSurface;
 	Tile *tile;
@@ -1339,7 +1342,7 @@ void Map::drawTerrain(Surface *surface)
 							Surface::blitRaw(surface, tmpSurface, screenPosition.x, screenPosition.y, 0);
 
 							// UFO extender accuracy: display adjusted accuracy value on crosshair in real-time.
-							if (_cursorType >= CT_AIM && _showInfoOnCursor && (_cursorType != CT_THROW || !Options::oxceDisableInfoOnThrowCursor))
+							if (_cursorType >= CT_AIM && (_showInfoOnCursor || _game->getMod()->isRangeVisualCursorTagsEnabled() || _game->getMod()->isVisualLOFIndicator()) && (_cursorType != CT_THROW || !Options::oxceDisableInfoOnThrowCursor))
 							{
 								BattleAction *action = _save->getBattleGame()->getCurrentAction();
 								const RuleItem *weapon = action->weapon->getRules();
@@ -1352,35 +1355,45 @@ void Map::drawTerrain(Surface *surface)
 								{
 									int accuracy = BattleUnit::getFiringAccuracy(attack, _game->getMod());
 
+									if (_game->getMod()->isAllowAimHigh() && _isShiftPressed && action->type != BA_THROW && action->type != BA_LAUNCH && action->actor->getFaction() == FACTION_PLAYER)
 									{
-										int upperLimit, lowerLimit;
-										int dropoff = weapon->calculateLimits(upperLimit, lowerLimit, _save->getDepth(), action->type);
+										// Aim High (headshot/precision profile) penalty
+										int penalty = _game->getMod()->getAimHighAccuracyPenalty();
+										accuracy = accuracy * (100 - penalty) / 100;
+									}
 
-										// at this point, let's assume the shot is adjusted and set the text amber.
-										_txtAccuracy->setColor(Palette::blockOffset(Pathfinding::yellow - 1) - 1);
+									int upperLimit = 0, lowerLimit = 0;
+									int dropoff = weapon->calculateLimits(upperLimit, lowerLimit, _save->getDepth(), action->type);
+									if (upperLimit <= 0 || upperLimit == 200)
+									{
+										upperLimit = weapon->getMaxRange();
+									}
+									if (upperLimit >= 200) upperLimit = 0;
 
-										if (distance > upperLimit)
-										{
-											accuracy -= (distance - upperLimit) * dropoff;
-										}
-										else if (distance < lowerLimit)
-										{
-											accuracy -= (lowerLimit - distance) * dropoff;
-										}
-										else
-										{
-											// no adjustment made? set it to green.
-											_txtAccuracy->setColor(Palette::blockOffset(Pathfinding::green - 1) - 1);
-										}
+									// at this point, let's assume the shot is adjusted and set the text amber.
+									_txtAccuracy->setColor(Palette::blockOffset(Pathfinding::yellow - 1) - 1);
+
+									if (distance > upperLimit)
+									{
+										accuracy -= (distance - upperLimit) * dropoff;
+									}
+									else if (distance < lowerLimit)
+									{
+										accuracy -= (lowerLimit - distance) * dropoff;
+									}
+									else
+									{
+										// no adjustment made? set it to green.
+										_txtAccuracy->setColor(Palette::blockOffset(Pathfinding::green - 1) - 1);
 									}
 
 									// Include LOS penalty for tiles in the unit's current view range
 									// Don't recalculate LOS for outside of the current FOV
 									int noLOSAccuracyPenalty = action->weapon->getRules()->getNoLOSAccuracyPenalty(_game->getMod());
-									if (noLOSAccuracyPenalty != -1)
+									bool hasLOS = true;
+									if (noLOSAccuracyPenalty != -1 || _game->getMod()->isRangeVisualCursorTagsEnabled())
 									{
-										bool hasLOS = false;
-										if (Position(itX, itY, itZ) == _cacheCursorPosition && _isCtrlPressed == _cacheIsCtrlPressed && _cacheHasLOS != -1)
+										if (Position(itX, itY, itZ) == _cacheCursorPosition && _isCtrlPressed == _cacheIsCtrlPressed && _isShiftPressed == _cacheIsShiftPressed && _cacheHasLOS != -1)
 										{
 											// use cached result
 											hasLOS = (_cacheHasLOS == 1);
@@ -1398,14 +1411,63 @@ void Map::drawTerrain(Surface *surface)
 											}
 											// remember
 											_cacheIsCtrlPressed = _isCtrlPressed;
+											_cacheIsShiftPressed = _isShiftPressed;
 											_cacheCursorPosition = Position(itX, itY, itZ);
 											_cacheHasLOS = hasLOS ? 1 : 0;
+											_cacheHasLOF = -1;
 										}
 
-										if (!hasLOS)
+										if (!hasLOS && noLOSAccuracyPenalty != -1)
 										{
 											accuracy = accuracy * noLOSAccuracyPenalty / 100;
 											_txtAccuracy->setColor(Palette::blockOffset(Pathfinding::yellow - 1) - 1);
+										}
+									}
+
+									// Pre-Shot Line of Fire (LOF) obstruction check (JA2 ChanceToGetThrough)
+									bool blockedLOF = false;
+									if (_game->getMod()->isVisualLOFIndicator() && action->type != BA_THROW && action->type != BA_LAUNCH && !action->weapon->getArcingShot(action->type) && !_isCtrlPressed)
+									{
+										bool hasLOF = true;
+										if (Position(itX, itY, itZ) == _cacheCursorPosition && _isCtrlPressed == _cacheIsCtrlPressed && _isShiftPressed == _cacheIsShiftPressed && _cacheHasLOF != -1)
+										{
+											hasLOF = (_cacheHasLOF == 1);
+										}
+										else
+										{
+											Position originVoxel = _save->getTileEngine()->getOriginVoxel(*action, _save->getTile(action->actor->getPosition()));
+											Position targetVoxel;
+
+											if (unit && (unit->getVisible() || _save->getDebugMode()))
+											{
+												hasLOF = _save->getTileEngine()->canTargetUnit(&originVoxel, tile, &targetVoxel, action->actor, false);
+												if (!hasLOF && _isShiftPressed)
+												{
+													int headZ = unit->getHeight() > 0 ? unit->getHeight() - 2 : 16;
+													targetVoxel = tile->getPosition().toVoxel() + Position(8, 8, headZ);
+													std::vector<Position> trajectory;
+													int test = _save->getTileEngine()->calculateLineVoxel(originVoxel, targetVoxel, false, &trajectory, action->actor);
+													if (test == V_UNIT || test == V_EMPTY)
+													{
+														hasLOF = true;
+													}
+												}
+											}
+											else
+											{
+												targetVoxel = tile->getPosition().toVoxel() + Position(8, 8, 8);
+												std::vector<Position> trajectory;
+												int test = _save->getTileEngine()->calculateLineVoxel(originVoxel, targetVoxel, false, &trajectory, action->actor);
+												if (test != V_EMPTY && test != V_OUTOFBOUNDS && test != V_UNIT)
+												{
+													hasLOF = false;
+												}
+											}
+											_cacheHasLOF = hasLOF ? 1 : 0;
+										}
+										if (!hasLOF)
+										{
+											blockedLOF = true;
 										}
 									}
 
@@ -1413,14 +1475,54 @@ void Map::drawTerrain(Surface *surface)
 										? weapon->isOutOfThrowRange(distanceSq, _save->getDepth())
 										: weapon->isOutOfRange(distanceSq);
 
-									// zero accuracy or out of range: set it red.
-									if (accuracy <= 0 || outOfRange)
+									if (blockedLOF)
 									{
-										accuracy = 0;
 										_txtAccuracy->setColor(Palette::blockOffset(Pathfinding::red - 1) - 1);
+										ss << "NO LOF";
 									}
-									ss << accuracy;
-									ss << "%";
+									else
+									{
+										// zero accuracy or out of range: set it red.
+										if (accuracy <= 0 || outOfRange)
+										{
+											accuracy = 0;
+											_txtAccuracy->setColor(Palette::blockOffset(Pathfinding::red - 1) - 1);
+										}
+										ss << accuracy;
+										ss << "%";
+										if (_isShiftPressed && action->type != BA_THROW && action->type != BA_LAUNCH && action->actor->getFaction() == FACTION_PLAYER)
+										{
+											ss << " [HIGH]";
+										}
+									}
+
+									if (_game->getMod()->isRangeVisualCursorTagsEnabled())
+									{
+										bool isBVR = !hasLOS;
+										bool isBeyondRange = (upperLimit > 0 && distance > upperLimit);
+
+										if (isBVR && isBeyondRange)
+										{
+											ss << " [BVR+RANGE]";
+										}
+										else if (isBVR)
+										{
+											ss << " [BVR]";
+										}
+										else if (isBeyondRange)
+										{
+											ss << " [RANGE]";
+										}
+
+										if (upperLimit > 0)
+										{
+											ss << " [dist:" << distance << "/max:" << upperLimit << "]";
+										}
+										else
+										{
+											ss << " [dist:" << distance << "]";
+										}
+									}
 								}
 
 								//TODO: merge this code with `InventoryState::calculateCurrentDamageTooltip` as 90% is same or should be same
@@ -2304,8 +2406,10 @@ void Map::setCursorType(CursorType type, int size)
 	// reset cursor indicator cache
 	_cacheActiveWeaponUfopediaArticleUnlocked = -1;
 	_cacheIsCtrlPressed = false;
+	_cacheIsShiftPressed = false;
 	_cacheCursorPosition = TileEngine::invalid;
 	_cacheHasLOS = -1;
+	_cacheHasLOF = -1;
 
 	_cursorType = type;
 	if (_cursorType == CT_NORMAL)

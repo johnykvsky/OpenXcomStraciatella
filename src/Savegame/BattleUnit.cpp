@@ -17,6 +17,7 @@
  * along with OpenXcom.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "BattleUnit.h"
+#include "HitLog.h"
 #include "BattleItem.h"
 #include <sstream>
 #include <algorithm>
@@ -63,7 +64,7 @@ namespace OpenXcom
  * @param depth the depth of the battlefield (used to determine movement type in case of MT_FLOAT).
  */
 BattleUnit::BattleUnit(const Mod *mod, Soldier *soldier, int depth, const RuleStartingCondition* sc) :
-	_faction(FACTION_PLAYER), _originalFaction(FACTION_PLAYER), _killedBy(FACTION_PLAYER), _id(0), _tile(0),
+	_mod(mod), _faction(FACTION_PLAYER), _originalFaction(FACTION_PLAYER), _killedBy(FACTION_PLAYER), _id(0), _tile(0),
 	_lastPos(Position()), _direction(0), _toDirection(0), _directionTurret(0), _toDirectionTurret(0),
 	_verticalDirection(0), _status(STATUS_STANDING), _wantsToSurrender(false), _isSurrendering(false), _walkPhase(0), _fallPhase(0), _kneeled(false), _floating(false),
 	_dontReselect(false), _aiMedikitUsed(false), _fire(0), _currentAIState(0), _visible(false),
@@ -73,7 +74,8 @@ BattleUnit::BattleUnit(const Mod *mod, Soldier *soldier, int depth, const RuleSt
 	_statistics(), _murdererId(0), _mindControllerID(0), _fatalShotSide(SIDE_FRONT), _fatalShotBodyPart(BODYPART_HEAD), _armor(0),
 	_geoscapeSoldier(soldier), _unitRules(0), _rankInt(0), _turretType(-1), _hidingForTurn(false), _floorAbove(false), _respawn(false), _alreadyRespawned(false),
 	_isLeeroyJenkins(false), _summonedPlayerUnit(false), _resummonedFakeCivilian(false), _pickUpWeaponsMoreActively(false), _disableIndicators(false),
-	_capturable(true), _vip(false), _bannedInNextStage(false), _skillMenuCheck(false)
+	_capturable(true), _vip(false), _bannedInNextStage(false), _skillMenuCheck(false),
+	_alertStatus(ALERT_GREEN), _noiseTarget(-1, -1, -1), _noiseVolume(0), _alertTurns(0), _suppressionPoints(0)
 {
 	_name = soldier->getName(true);
 	_id = soldier->getId();
@@ -182,7 +184,8 @@ void BattleUnit::updateArmorFromSoldier(const Mod *mod, Soldier *soldier, const 
 		bonusVisibilityThroughSmoke += bonusRule->getVisibilityThroughSmoke();
 		bonusVisibilityThroughFire += bonusRule->getVisibilityThroughFire();
 	}
-	_maxViewDistanceAtDark = _armor->getVisibilityAtDark() ? _armor->getVisibilityAtDark() : 9;
+	int baseDarkVis = (mod && mod->isSymmetricalNightVisionEnabled()) ? mod->getPlayerBaseViewDistanceAtDark() : 9;
+	_maxViewDistanceAtDark = _armor->getVisibilityAtDark() ? _armor->getVisibilityAtDark() : baseDarkVis;
 	_maxViewDistanceAtDark = Clamp(_maxViewDistanceAtDark + visibilityDarkBonus, 1, mod->getMaxViewDistance());
 	_maxViewDistanceAtDarkSquared = _maxViewDistanceAtDark * _maxViewDistanceAtDark;
 	_maxViewDistanceAtDay = _armor->getVisibilityAtDay() ? _armor->getVisibilityAtDay() : mod->getMaxViewDistance();
@@ -465,7 +468,7 @@ void BattleUnit::prepareBannedFlag(const RuleStartingCondition* sc)
  * @param depth the depth of the battlefield (used to determine movement type in case of MT_FLOAT).
  */
 BattleUnit::BattleUnit(const Mod *mod, const Unit *unit, UnitFaction faction, int id, const RuleEnviroEffects* enviro, const Armor *armor, StatAdjustment *adjustment, int depth, const RuleStartingCondition* sc) :
-	_faction(faction), _originalFaction(faction), _killedBy(faction), _id(id),
+	_mod(mod), _faction(faction), _originalFaction(faction), _killedBy(faction), _id(id),
 	_tile(0), _lastPos(Position()), _direction(0), _toDirection(0), _directionTurret(0),
 	_toDirectionTurret(0), _verticalDirection(0), _status(STATUS_STANDING), _wantsToSurrender(false), _isSurrendering(false), _walkPhase(0),
 	_fallPhase(0), _kneeled(false), _floating(false), _dontReselect(false), _aiMedikitUsed(false), _fire(0), _currentAIState(0),
@@ -476,7 +479,8 @@ BattleUnit::BattleUnit(const Mod *mod, const Unit *unit, UnitFaction faction, in
 	_fatalShotBodyPart(BODYPART_HEAD), _armor(armor), _geoscapeSoldier(0),  _unitRules(unit),
 	_rankInt(0), _turretType(-1), _hidingForTurn(false), _respawn(false), _alreadyRespawned(false),
 	_isLeeroyJenkins(false), _summonedPlayerUnit(false), _resummonedFakeCivilian(false), _pickUpWeaponsMoreActively(false), _disableIndicators(false),
-	_vip(false), _bannedInNextStage(false), _skillMenuCheck(false)
+	_vip(false), _bannedInNextStage(false), _skillMenuCheck(false),
+	_alertStatus(ALERT_GREEN), _noiseTarget(-1, -1, -1), _noiseVolume(0), _alertTurns(0), _suppressionPoints(0)
 {
 	if (enviro)
 	{
@@ -583,7 +587,8 @@ void BattleUnit::updateArmorFromNonSoldier(const Mod* mod, const Armor* newArmor
 	_stats = UnitStats::obeyFixedMinimum(_stats); // don't allow to go into minus!
 
 
-	_maxViewDistanceAtDark = _armor->getVisibilityAtDark() ? _armor->getVisibilityAtDark() : _originalFaction == FACTION_HOSTILE ? mod->getMaxViewDistance() : 9;
+	int baseDarkVis = (mod && mod->isSymmetricalNightVisionEnabled()) ? mod->getPlayerBaseViewDistanceAtDark() : 9;
+	_maxViewDistanceAtDark = _armor->getVisibilityAtDark() ? _armor->getVisibilityAtDark() : _originalFaction == FACTION_HOSTILE ? mod->getMaxViewDistance() : baseDarkVis;
 	_maxViewDistanceAtDarkSquared = _maxViewDistanceAtDark * _maxViewDistanceAtDark;
 	_maxViewDistanceAtDay = _armor->getVisibilityAtDay() ? _armor->getVisibilityAtDay() : mod->getMaxViewDistance();
 	_psiVision = _armor->getPsiVision();
@@ -655,6 +660,7 @@ BattleUnit::~BattleUnit()
  */
 void BattleUnit::load(const YAML::YamlNodeReader& node, const Mod *mod, const ScriptGlobal *shared)
 {
+	_mod = mod;
 	const auto& reader = node.useIndex();
 	reader.tryRead("id", _id);
 	if (reader["voiceSetID"])
@@ -2944,6 +2950,21 @@ void BattleUnit::updateUnitStats(bool tuAndEnergy, bool rest)
 		// update stats
 		prepareTimeUnits(_armor->getTimeRecovery(this, TURecovery));
 		prepareEnergy(_armor->getEnergyRecovery(this, ENRecovery));
+
+		// Tactical Suppression: Apply accumulated TU and morale penalties on new turn
+		if (_suppressionPoints > 0)
+		{
+			int maxPenalty = (_mod && _mod->getSuppressionMaxTUPenalty() > 0) ? _mod->getSuppressionMaxTUPenalty() : 25;
+			int tuPenalty = std::min(_tu * maxPenalty / 100, _suppressionPoints * 2);
+			_tu = std::max(0, _tu - tuPenalty);
+			int moraleLoss = (_mod && _mod->getSuppressionMoraleLoss() > 0) ? _mod->getSuppressionMoraleLoss() : 3;
+			int moralePenalty = (_suppressionPoints / 2) * moraleLoss;
+			if (moralePenalty > 0)
+			{
+				moraleChange(-moralePenalty);
+			}
+			_suppressionPoints = 0;
+		}
 	}
 }
 
@@ -4615,13 +4636,22 @@ int BattleUnit::getMaxViewDistance(int baseVisibility, int nerf, int buff) const
 
 int BattleUnit::getMaxViewDistanceAtDark(const BattleUnit* otherUnit) const
 {
+	int itemDarkBonus = 0;
+	for (const auto* item : _inventory)
+	{
+		if (item && item->getRules())
+		{
+			itemDarkBonus += item->getRules()->getVisibilityAtDarkBonus();
+		}
+	}
+	int effBase = _maxViewDistanceAtDark + itemDarkBonus;
 	if (otherUnit)
 	{
-		return getMaxViewDistance(_maxViewDistanceAtDark, otherUnit->getArmor()->getCamouflageAtDark(), _armor->getAntiCamouflageAtDark());
+		return getMaxViewDistance(effBase, otherUnit->getArmor()->getCamouflageAtDark(), _armor->getAntiCamouflageAtDark());
 	}
 	else
 	{
-		return _maxViewDistanceAtDark;
+		return effBase;
 	}
 }
 
@@ -4893,6 +4923,71 @@ void BattleUnit::updateTurnsSince()
 		left = Clamp(left - 1, 0, 255);
 	}
 	//_turnsSinceStunned is updated elsewhere
+
+	// Decay acoustic alert status
+	if (_alertTurns > 0)
+	{
+		_alertTurns--;
+		if (_alertTurns == 0)
+		{
+			_alertStatus = ALERT_GREEN;
+			_noiseTarget = Position(-1, -1, -1);
+			_noiseVolume = 0;
+		}
+	}
+}
+
+/**
+ * Handles auditory awareness when hearing a noise.
+ * @param source Position of the sound.
+ * @param volume Effective heard volume.
+ * @param alertTrigger Whether this was gunfire/explosion (RED) or footstep/creak (YELLOW).
+ */
+void BattleUnit::hearNoise(const Position& source, int volume, AlertStatus alertTrigger)
+{
+	if (volume > _noiseVolume || _alertStatus < alertTrigger)
+	{
+		_noiseTarget = source;
+		_noiseVolume = volume;
+		if (_alertStatus < alertTrigger)
+		{
+			_alertStatus = alertTrigger;
+		}
+		_alertTurns = (alertTrigger == ALERT_RED) ? 4 : 2;
+	}
+}
+
+/**
+ * Applies suppression points from near-miss bullets.
+ * @param points Suppression strength from weapon factor.
+ * @param firer The unit firing the projectile.
+ */
+void BattleUnit::addSuppression(int points, BattleUnit* firer, SavedBattleGame* save)
+{
+	_suppressionPoints += points;
+
+	// Immediate reaction disruption: slightly penalize current TUs to disrupt reaction overwatch
+	if (_tu > 0)
+	{
+		int tuDeduction = std::min(_tu, points * 2);
+		_tu -= tuDeduction;
+	}
+
+	// Forced dive into cover: if standing and burst fire accumulates >= kneelThreshold suppression points, drop to knees
+	int kneelThreshold = (_mod && _mod->getSuppressionKneelThreshold() > 0) ? _mod->getSuppressionKneelThreshold() : 3;
+	if (!_kneeled && getArmor()->allowsKneeling(false))
+	{
+		if (_suppressionPoints >= kneelThreshold)
+		{
+			kneel(true);
+		}
+	}
+
+	// Generic Suppression Visual UI Feedback Hook
+	if (save && save->getMod()->isSuppressionVisualFeedbackEnabled() && _suppressionPoints >= kneelThreshold)
+	{
+		save->appendToHitLog(HITLOG_NO_DAMAGE, _faction, "STR_PINNED_DOWN");
+	}
 }
 
 
@@ -5137,6 +5232,7 @@ void BattleUnit::deriveNeutralRank()
 bool BattleUnit::checkViewSector (Position pos, bool useTurretDirection /* = false */) const
 {
 	int unitSize = getArmor()->getSize();
+	int dir = useTurretDirection ? _directionTurret : _direction;
 	//Check view cone from each of the unit's tiles
 	for (int x = 0; x < unitSize; ++x)
 	{
@@ -5144,42 +5240,74 @@ bool BattleUnit::checkViewSector (Position pos, bool useTurretDirection /* = fal
 		{
 			int deltaX = pos.x - (_pos.x + x);
 			int deltaY = (_pos.y + y) - pos.y;
-			switch (useTurretDirection ? _directionTurret : _direction)
+			bool inPrimaryCone = false;
+			switch (dir)
 			{
 			case 0:
 				if ((deltaX + deltaY >= 0) && (deltaY - deltaX >= 0))
-					return true;
+					inPrimaryCone = true;
 				break;
 			case 1:
 				if ((deltaX >= 0) && (deltaY >= 0))
-					return true;
+					inPrimaryCone = true;
 				break;
 			case 2:
 				if ((deltaX + deltaY >= 0) && (deltaY - deltaX <= 0))
-					return true;
+					inPrimaryCone = true;
 				break;
 			case 3:
 				if ((deltaY <= 0) && (deltaX >= 0))
-					return true;
+					inPrimaryCone = true;
 				break;
 			case 4:
 				if ((deltaX + deltaY <= 0) && (deltaY - deltaX <= 0))
-					return true;
+					inPrimaryCone = true;
 				break;
 			case 5:
 				if ((deltaX <= 0) && (deltaY <= 0))
-					return true;
+					inPrimaryCone = true;
 				break;
 			case 6:
 				if ((deltaX + deltaY <= 0) && (deltaY - deltaX >= 0))
-					return true;
+					inPrimaryCone = true;
 				break;
 			case 7:
 				if ((deltaY >= 0) && (deltaX <= 0))
-					return true;
+					inPrimaryCone = true;
 				break;
 			default:
 				break;
+			}
+			if (inPrimaryCone)
+			{
+				return true;
+			}
+
+			// Generic Peripheral Vision Hook (~180 degree arc at reduced distance)
+			if (_mod && _mod->isPeripheralVisionEnabled())
+			{
+				bool inPeripheralCone = false;
+				switch (dir)
+				{
+				case 0: inPeripheralCone = (deltaY >= 0); break;
+				case 1: inPeripheralCone = (deltaX + deltaY >= 0); break;
+				case 2: inPeripheralCone = (deltaX >= 0); break;
+				case 3: inPeripheralCone = (deltaX - deltaY >= 0); break;
+				case 4: inPeripheralCone = (deltaY <= 0); break;
+				case 5: inPeripheralCone = (deltaX + deltaY <= 0); break;
+				case 6: inPeripheralCone = (deltaX <= 0); break;
+				case 7: inPeripheralCone = (deltaY - deltaX >= 0); break;
+				default: break;
+				}
+				if (inPeripheralCone)
+				{
+					double ratio = _mod->getPeripheralVisionRatio();
+					int maxDist = (int)(_maxViewDistanceAtDay * ratio);
+					if (deltaX * deltaX + deltaY * deltaY <= maxDist * maxDist)
+					{
+						return true;
+					}
+				}
 			}
 		}
 	}

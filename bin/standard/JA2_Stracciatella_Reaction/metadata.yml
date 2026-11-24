@@ -1,0 +1,9 @@
+# metadata.yml for Jagged Alliance 2 Straciatella Reaction
+
+name: "Jagged Alliance 2 Straciatella Reaction"
+id: ja2-stracciatella-reaction
+version: "1.0"
+description: "Brings Jagged Alliance 2 interactive interrupts and tactical reaction fire to OpenXcom: lets the player choose attack mode (Snap, Auto, Aimed), throw primed or quick-draw belt grenades with immediate impact detonation, or hold fire to conserve TUs, while empowering alien AI with distance-based reaction mode selection."
+author: "Antigravity & User"
+
+master: xcom1

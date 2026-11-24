@@ -1,0 +1,9 @@
+# metadata.yml for Jagged Alliance 2 Straciatella Aliens (TFTD)
+
+name: "Jagged Alliance 2 Straciatella Aliens (TFTD)"
+id: ja2-stracciatella-aliens-tftd
+version: "1.0"
+description: "Rebalances Terror from the Deep enemies for Jagged Alliance 2 Stracciatella: asymmetrical night vision tiers, thermal and psionic senses, suppression immunities, acoustic stealth and hearing acuity, and spotter/sniper AI roles."
+author: "Antigravity & User"
+
+master: xcom2

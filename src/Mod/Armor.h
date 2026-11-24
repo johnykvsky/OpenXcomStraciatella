@@ -166,6 +166,8 @@ private:
 	std::map<std::string, std::vector<const RuleVoiceSet*> > _voiceSets;
 
 	int _size, _weight, _visibilityAtDark, _visibilityAtDay;
+	float _noiseMovementFactor;
+	int _hearingBonus;
 
 	int _personalLightFriend = 15;
 	int _personalLightHostile = 0;
@@ -417,6 +419,10 @@ public:
 	int getPsiVision() const;
 	/// Gets info about psi camouflage.
 	int getPsiCamouflage() const;
+	/// Gets species acoustic noise factor (default 1.0f).
+	float getNoiseMovementFactor() const { return _noiseMovementFactor; }
+	/// Gets auditory hearing bonus (default 0).
+	int getHearingBonus() const { return _hearingBonus; }
 	/// Gets personal soldier light radius;
 	int getPersonalLightFriend() const;
 	/// Gets personal alien light radius;

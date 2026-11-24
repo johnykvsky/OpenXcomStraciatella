@@ -65,6 +65,9 @@ OPT SDLKey keyBasescapeBuildNewBase, keyBasescapeBaseInfo, keyBasescapeSoldiers,
 	keyBasescapeFacilities, keyBasescapeResearch, keyBasescapeManufacture, keyBasescapeTransfer,
 	keyBasescapePurchase, keyBasescapeSell;
 
+// Jagged Alliance 2 Stracciatella options
+OPT bool ja2sRangeVisualCursorTags, ja2sVisualLOFIndicator, ja2sSuppressionVisualFeedback, ja2sAllowAimHigh;
+
 // OXCE, accessible via GUI
 OPT bool oxceUpdateCheck;
 OPT int autosaveSlots;

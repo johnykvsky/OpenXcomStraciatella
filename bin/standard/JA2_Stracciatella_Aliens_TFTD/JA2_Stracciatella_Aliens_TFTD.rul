@@ -1,0 +1,181 @@
+# =========================================================================
+# Jagged Alliance 2 Stracciatella Aliens MOD for Terror from the Deep
+# Rebalances TFTD alien sensory, acoustic, psychological, and AI profiles:
+# =========================================================================
+
+# Smart Tactical AI Configuration
+ai:
+  extendedFireModeChoice: true       # Calculates actual hit chances & range dropoffs before shooting
+  respectMaxRange: true              # Cancels shots beyond weapon maxRange and closes the distance
+  reactionFireThreshold: 25          # Holds reaction overwatch unless hit chance is >= 25% (clean ambush)
+  pickUpWeaponsMoreActively: true     # Disarmed aliens scavenge dropped weapons & ammo from the ground
+  targetWeightThreatThreshold: 80    # Prioritizes dangerous heavy weapons over harmless tanks/decoys
+
+armors:
+  # =======================================================================
+  # AQUATOID (Cloned oceanic line grunts; fragile, large eyes, psionics)
+  # =======================================================================
+  - type: AQUATOID_ARMOR0
+    visibilityAtDark: 14
+    allowsKneeling: true
+    noiseMovementFactor: 1.0
+
+  # =======================================================================
+  # GILLMAN (Cold-blooded amphibious infiltrators; thermal pit organs)
+  # =======================================================================
+  - type: GILLMAN_ARMOR0
+    visibilityAtDark: 15
+    heatVision: 50
+    allowsKneeling: true
+    noiseMovementFactor: 0.6
+
+  # =======================================================================
+  # TASOTH (Genetically engineered elite shock troopers; power armor)
+  # =======================================================================
+  - type: TASOTH_ARMOR0
+    visibilityAtDark: 16
+    hearingBonus: -2
+    allowsKneeling: true
+    noiseMovementFactor: 1.1
+
+  # =======================================================================
+  # LOBSTERMAN (Heavy armored chitinous biped; extreme armor plate)
+  # =======================================================================
+  - type: LOBSTERMAN_ARMOR0
+    visibilityAtDark: 15
+    fearImmune: true
+    painImmune: true
+    allowsKneeling: false
+    noiseMovementFactor: 1.4
+
+  - type: LOBSTERMAN_ARMOR1
+    visibilityAtDark: 15
+    fearImmune: true
+    painImmune: true
+    allowsKneeling: false
+    noiseMovementFactor: 1.4
+
+  - type: LOBSTERMAN_ARMOR2
+    visibilityAtDark: 15
+    fearImmune: true
+    painImmune: true
+    allowsKneeling: false
+    noiseMovementFactor: 1.4
+
+  # =======================================================================
+  # DEEP ONE (Amphibious terror bio-weapon)
+  # =======================================================================
+  - type: DEEP_ONE_ARMOR0
+    visibilityAtDark: 14
+    heatVision: 50
+    allowsKneeling: true
+
+  # =======================================================================
+  # CALCINITE (Armored diving-suit melee warrior)
+  # =======================================================================
+  - type: CALCINITE_ARMOR0
+    visibilityAtDark: 16
+    fearImmune: true
+    allowsKneeling: false
+
+  # =======================================================================
+  # TENTACULAT (Deep sea apex ambush nightmare; lethal tentacles, floating)
+  # =======================================================================
+  - type: TENTACULAT_ARMOR0
+    visibilityAtDark: 18
+    fearImmune: true
+    hearingBonus: 4
+    noiseMovementFactor: 0.5
+    allowsKneeling: false
+
+  # =======================================================================
+  # BIO-DRONE (Autonomous floating terror drone; active thermal targeting)
+  # =======================================================================
+  - type: BIODRONE_ARMOR0
+    visibilityAtDark: 20
+    heatVision: 100
+    fearImmune: true
+    allowsKneeling: false
+    noiseMovementFactor: 1.0
+
+  # =======================================================================
+  # HALLUCINOID (Gigantic floating jellyfish; silent underwater drift)
+  # =======================================================================
+  - type: HALLUCINOID_ARMOR0
+    visibilityAtDark: 16
+    heatVision: 100
+    fearImmune: true
+    allowsKneeling: false
+    noiseMovementFactor: 0.2
+
+  # =======================================================================
+  # TRISCENE (Heavily armored sea dinosaur; acoustic hunter, heavy stomps)
+  # =======================================================================
+  - type: TRISCENE_ARMOR0
+    visibilityAtDark: 16
+    fearImmune: true
+    hearingBonus: 5
+    noiseMovementFactor: 1.8
+    allowsKneeling: false
+
+  # =======================================================================
+  # XARQUID (Armored cephalopod shell; long-range bio-plasma fire)
+  # =======================================================================
+  - type: XARQUID_ARMOR0
+    visibilityAtDark: 15
+    heatVision: 75
+    fearImmune: true
+    allowsKneeling: false
+
+  # =======================================================================
+  # ZOMBIE (Decaying host corpse)
+  # =======================================================================
+  - type: ZOMBIE_ARMOR
+    visibilityAtDark: 10
+    hearingBonus: -2
+    fearImmune: true
+    painImmune: true
+    allowsKneeling: false
+    noiseMovementFactor: 1.2
+
+# =========================================================================
+# UNIT BEHAVIOR & SPOTTER / SNIPER ROLES (TFTD)
+# =========================================================================
+units:
+  # Aquatoid Spotters & Psionics
+  - type: STR_AQUATOID_NAVIGATOR
+    spotter: 1
+
+  - type: STR_AQUATOID_SQUAD_LEADER
+    spotter: 1
+
+  - type: STR_AQUATOID_COMMANDER
+    spotter: 2
+
+  # Gillman Recon
+  - type: STR_GILLMAN_SQUAD_LEADER
+    spotter: 1
+
+  # Tasoth Heavy Fire Support
+  - type: STR_TASOTH_SOLDIER
+    sniper: 1
+
+  - type: STR_TASOTH_SQUAD_LEADER
+    spotter: 1
+    sniper: 2
+
+  # Lobsterman Command & Spotting
+  - type: STR_LOBSTERMAN_NAVIGATOR
+    spotter: 2
+
+  - type: STR_LOBSTERMAN_COMMANDER
+    spotter: 2
+    sniper: 2
+
+  # Bio-Drone Flying Observation Platform
+  - type: STR_BIODRONE_TERRORIST
+    spotter: 2
+
+  # Xarquid Long-Range Sniper
+  - type: STR_XARQUID_TERRORIST
+    sniper: 2

@@ -1,0 +1,235 @@
+# =========================================================================
+# Jagged Alliance 2 Stracciatella Aliens MOD for OpenXcom (OXCE)
+# Rebalances alien sensory, acoustic, psychological, and AI profiles:
+# 1. Asymmetrical Night Vision Tiers (Biological vs. Predators vs. Tech/Psi)
+# 2. Thermal Smoke Penetration (heatVision) & Psionic Detection (psiVision)
+# 3. Suppression Resistances & Forced Kneeling Permissions
+# 4. Species Acoustic Movement Footprints & Auditory Hearing Acuity
+# 5. Integrated Spotter & Sniper AI Networks for BVR Engagements
+# 6. Smart Tactical AI: Reaction Discipline, Scavenging, & Range Awareness
+# =========================================================================
+
+# Smart Tactical AI Configuration
+ai:
+  extendedFireModeChoice: true       # Calculates actual hit chances & range dropoffs before shooting
+  respectMaxRange: true              # Cancels shots beyond weapon maxRange and closes the distance
+  reactionFireThreshold: 25          # Holds reaction overwatch unless hit chance is >= 25% (clean ambush)
+  pickUpWeaponsMoreActively: true     # Disarmed aliens scavenge dropped weapons & ammo from the ground
+  targetWeightThreatThreshold: 80    # Prioritizes dangerous heavy weapons over harmless tanks/decoys
+
+armors:
+  # =======================================================================
+  # SECTOID (Cloned line grunts; fragile, large pupils, mild psionics)
+  # =======================================================================
+  - type: SECTOID_ARMOR0
+    visibilityAtDark: 14
+    allowsKneeling: true
+    noiseMovementFactor: 1.0
+
+  # =======================================================================
+  # CYBERDISC (Autonomous battle platform; 360 optics, active radar/thermal)
+  # =======================================================================
+  - type: CYBERDISC_ARMOR
+    visibilityAtDark: 20
+    heatVision: 100
+    fearImmune: true
+    allowsKneeling: false
+    noiseMovementFactor: 1.5
+
+  # =======================================================================
+  # FLOATER (Cybernetic torso grafted to repulsor drive; aerial scouts)
+  # =======================================================================
+  - type: FLOATER_ARMOR0
+    visibilityAtDark: 14
+    allowsKneeling: false
+
+  - type: FLOATER_ARMOR1
+    visibilityAtDark: 15
+    allowsKneeling: false
+
+  - type: FLOATER_ARMOR2
+    visibilityAtDark: 15
+    allowsKneeling: false
+
+  # =======================================================================
+  # REAPER (Apex predatory beast; acute hearing, vibration hunting)
+  # =======================================================================
+  - type: REAPER_ARMOR
+    visibilityAtDark: 16
+    hearingBonus: 5
+    noiseMovementFactor: 1.5
+    allowsKneeling: false
+
+  # =======================================================================
+  # SNAKEMAN (Reptilian infiltrator; infrared pit organs, silent slither)
+  # =======================================================================
+  - type: SNAKEMAN_ARMOR0
+    visibilityAtDark: 16
+    heatVision: 50
+    noiseMovementFactor: 0.5
+    allowsKneeling: false
+
+  - type: SNAKEMAN_ARMOR1
+    visibilityAtDark: 16
+    heatVision: 50
+    noiseMovementFactor: 0.5
+    allowsKneeling: false
+
+  - type: SNAKEMAN_ARMOR2
+    visibilityAtDark: 16
+    heatVision: 50
+    noiseMovementFactor: 0.5
+    allowsKneeling: false
+
+  # =======================================================================
+  # CHRYSSALID (Apex ambush horror; compound eyes, padded stalker claws)
+  # =======================================================================
+  - type: CHRYSSALID_ARMOR
+    visibilityAtDark: 18
+    fearImmune: true
+    hearingBonus: 4
+    noiseMovementFactor: 0.6
+    allowsKneeling: false
+
+  # =======================================================================
+  # ZOMBIE (Decaying host; dull senses, immune to psychological shock)
+  # =======================================================================
+  - type: ZOMBIE_ARMOR
+    visibilityAtDark: 10
+    hearingBonus: -2
+    fearImmune: true
+    painImmune: true
+    allowsKneeling: false
+    noiseMovementFactor: 1.2
+
+  # =======================================================================
+  # MUTON (Heavy shock infantry; sealed helmets, disciplined bipod kneel)
+  # =======================================================================
+  - type: MUTON_ARMOR0
+    visibilityAtDark: 15
+    hearingBonus: -2
+    allowsKneeling: true
+    noiseMovementFactor: 1.2
+
+  - type: MUTON_ARMOR1
+    visibilityAtDark: 15
+    hearingBonus: -2
+    allowsKneeling: true
+    noiseMovementFactor: 1.2
+
+  - type: MUTON_ARMOR2
+    visibilityAtDark: 15
+    hearingBonus: -2
+    allowsKneeling: true
+    noiseMovementFactor: 1.2
+
+  # =======================================================================
+  # SILACOID (Subterranean silicon blob; thermal / seismic sensory)
+  # =======================================================================
+  - type: SILACOID_ARMOR
+    visibilityAtDark: 9
+    heatVision: 100
+    hearingBonus: 3
+    fearImmune: true
+    allowsKneeling: false
+    noiseMovementFactor: 0.7
+
+  # =======================================================================
+  # CELATID (Floating bio-synthetic venom turret)
+  # =======================================================================
+  - type: CELATID_ARMOR
+    visibilityAtDark: 12
+    allowsKneeling: false
+
+  # =======================================================================
+  # ETHEREAL (Psionic masters; levitation, wall-penetrating mental vision)
+  # =======================================================================
+  - type: ETHEREAL_ARMOR0
+    visibilityAtDark: 20
+    heatVision: 75
+    psiVision: 12
+    fearImmune: true
+    allowsKneeling: false
+    noiseMovementFactor: 0.3
+
+  - type: ETHEREAL_ARMOR1
+    visibilityAtDark: 20
+    heatVision: 75
+    psiVision: 14
+    fearImmune: true
+    allowsKneeling: false
+    noiseMovementFactor: 0.3
+
+  - type: ETHEREAL_ARMOR2
+    visibilityAtDark: 20
+    heatVision: 100
+    psiVision: 16
+    fearImmune: true
+    allowsKneeling: false
+    noiseMovementFactor: 0.3
+
+  # =======================================================================
+  # SECTOPOD (Mechanical dreadnought; multi-spectrum radar, heavy stomps)
+  # =======================================================================
+  - type: SECTOPOD_ARMOR
+    visibilityAtDark: 20
+    heatVision: 100
+    hearingBonus: -3
+    fearImmune: true
+    allowsKneeling: false
+    noiseMovementFactor: 2.0
+
+# =========================================================================
+# UNIT BEHAVIOR & SPOTTER / SNIPER ROLES
+# =========================================================================
+units:
+  # Sectoid Spotters
+  - type: STR_SECTOID_NAVIGATOR
+    spotter: 1
+
+  - type: STR_SECTOID_LEADER
+    spotter: 1
+
+  - type: STR_SECTOID_COMMANDER
+    spotter: 2
+
+  # Cyberdisc Flying Observation Platform
+  - type: STR_CYBERDISC_TERRORIST
+    spotter: 2
+
+  # Floater Aerial Spotters
+  - type: STR_FLOATER_NAVIGATOR
+    spotter: 2
+
+  - type: STR_FLOATER_LEADER
+    spotter: 1
+
+  # Snakeman Patrol Coordinator
+  - type: STR_SNAKEMAN_LEADER
+    spotter: 1
+
+  # Muton Heavy Fire Support
+  - type: STR_MUTON_SOLDIER
+    sniper: 1
+
+  - type: STR_MUTON_NAVIGATOR
+    spotter: 1
+
+  - type: STR_MUTON_ENGINEER
+    sniper: 2
+
+  # Ethereal Psionic Fire Coordination
+  - type: STR_ETHEREAL_SOLDIER
+    sniper: 1
+
+  - type: STR_ETHEREAL_LEADER
+    spotter: 2
+    sniper: 2
+
+  - type: STR_ETHEREAL_COMMANDER
+    spotter: 3
+    sniper: 3
+
+  # Sectopod Long-Range Destruction
+  - type: STR_SECTOPOD_TERRORIST
+    sniper: 3

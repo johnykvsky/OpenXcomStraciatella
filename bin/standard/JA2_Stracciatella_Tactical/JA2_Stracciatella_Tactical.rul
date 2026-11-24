@@ -1,0 +1,163 @@
+# JA2 Stracciatella MOD for OpenXcom (OXCE)
+# Implements Jagged Alliance 2 combat philosophy:
+# 1. Beyond-Visual-Range (BVR) / Out-of-Sight Penalties (Anti-Ramp-Sniping)
+# 2. Weapon Effective Range and Distance Dropoff
+# 3. Simulated Bipod Deployment via Enhanced Kneel Bonuses on Heavy Weapons
+# 4. Scoped / Precision Aiming Modes for Rifles
+
+# Global baseline settings
+noLOSAccuracyPenaltyGlobal: 50    # 50% penalty when firing at targets outside personal LOS (JA2 iChance /= 2)
+kneelBonusGlobal: 120             # Baseline kneeling grants +20% accuracy
+allowAimHigh: true                # Enable JA2-style Sub-Voxel Head / Upper Elevation Targeting (Shift key)
+aimHighAccuracyPenalty: 15        # 15% precision penalty when targeting head/upper profile
+aimHighElevationOffset: 6         # Sub-voxel target elevation shift (voxels)
+visualLOFIndicator: true          # Dynamic crosshair LOF targeting indicator (Green/Yellow/Red)
+rangeVisualCursorTags: true       # Cursor tags ([BVR], [RANGE], [BVR+RANGE], [dist: X/max: Y])
+burstRecoil: true                 # Enables cumulative recoil muzzle climb on auto bursts
+burstRecoilPenalty: 15            # -15% accuracy penalty per consecutive bullet in burst
+burstElevationClimb: 1            # Sub-voxel elevation muzzle climb per shot
+symmetricalNightVision: true      # Enhances night combat through equipment & tactical parameters
+playerBaseViewDistanceAtDark: 12  # Baseline night vision before equipment enhancements
+
+# Smart Tactical AI Parameters
+ai:
+  extendedFireModeChoice: true    # Calculate accurate hit chance with distance dropoff before shooting
+  respectMaxRange: true           # Forbids wasting shots outside weapon maxRange and closes the distance
+
+items:
+  # =========================================================================
+  # PISTOLS & SIDEARMS
+  # Short effective range, high dropoff beyond 15 tiles, cannot spot-snipe
+  # =========================================================================
+  - type: STR_PISTOL
+    maxRange: 15
+    dropoff: 4
+    noLOSAccuracyPenalty: 25      # Pistols suffer massive 75% penalty beyond visual range
+    kneelBonus: 115
+
+  - type: STR_LASER_PISTOL
+    maxRange: 18
+    dropoff: 3
+    noLOSAccuracyPenalty: 30
+    kneelBonus: 115
+
+  - type: STR_PLASMA_PISTOL
+    maxRange: 16
+    dropoff: 4
+    noLOSAccuracyPenalty: 30
+    kneelBonus: 115
+
+  # =========================================================================
+  # RIFLES & CARBINES
+  # Medium-to-long infantry range.
+  # Aimed shot functions as a "Scoped Precision Shot" mitigating BVR penalties.
+  # =========================================================================
+  - type: STR_RIFLE
+    maxRange: 32
+    dropoff: 2
+    kneelBonus: 125               # +25% accuracy when kneeling/crouching
+    noLOSAccuracyPenalty: 90      # Dedicated sights reduce out-of-sight penalty to only 10%
+    confAimed:
+      name: STR_SCOPED_AIMED_SHOT
+
+  - type: STR_LASER_RIFLE
+    maxRange: 36
+    dropoff: 2
+    kneelBonus: 125
+    noLOSAccuracyPenalty: 95      # Laser rifle precision optics nearly eliminate BVR penalty
+    confAimed:
+      name: STR_SCOPED_AIMED_SHOT
+
+  - type: STR_PLASMA_RIFLE
+    maxRange: 34
+    dropoff: 2
+    kneelBonus: 125
+    noLOSAccuracyPenalty: 75
+
+  # =========================================================================
+  # HEAVY WEAPONS & BIPOD SIMULATION
+  # Unwieldy when moving/standing, but massive accuracy jump when kneeling (Bipod)
+  # Long effective range with gentle dropoff
+  # =========================================================================
+  - type: STR_HEAVY_CANNON
+    maxRange: 45
+    dropoff: 1
+    accuracySnap: 50              # Inaccurate on the move (JA2 heavy weapon penalty)
+    accuracyAimed: 80
+    kneelBonus: 145               # +45% accuracy multiplier when kneeling (Simulates Bipod deployment)
+    noLOSAccuracyPenalty: 60
+    confAimed:
+      name: STR_DEPLOYED_BIPOD_SHOT
+
+  - type: STR_AUTO_CANNON
+    maxRange: 40
+    dropoff: 2
+    accuracySnap: 50
+    accuracyAuto: 32
+    accuracyAimed: 75
+    kneelBonus: 145               # Bipod deployment provides heavy stability
+    noLOSAccuracyPenalty: 55
+    confAimed:
+      name: STR_DEPLOYED_BIPOD_SHOT
+
+  - type: STR_HEAVY_LASER
+    maxRange: 50
+    dropoff: 1
+    accuracySnap: 50
+    accuracyAimed: 85
+    kneelBonus: 140               # Integrated tripod/bipod bracing
+    noLOSAccuracyPenalty: 70
+    confAimed:
+      name: STR_DEPLOYED_BIPOD_SHOT
+
+  - type: STR_HEAVY_PLASMA
+    maxRange: 45
+    dropoff: 1
+    accuracySnap: 60
+    accuracyAimed: 95
+    kneelBonus: 135               # Heavy alien weapon stabilized when crouching
+    noLOSAccuracyPenalty: 65
+    confAimed:
+      name: STR_DEPLOYED_BIPOD_SHOT
+
+  # =========================================================================
+  # ROCKET LAUNCHERS & SPECIAL HEAVY ORDNANCE
+  # =========================================================================
+  - type: STR_ROCKET_LAUNCHER
+    maxRange: 45
+    dropoff: 2
+    kneelBonus: 135
+    noLOSAccuracyPenalty: 60
+
+  # =========================================================================
+  # TACTICAL NIGHT VISION & ELECTRO-OPTICS
+  # =========================================================================
+  - type: STR_ELECTRO_FLARE
+    visibilityAtDarkBonus: 4
+
+# ===========================================================================
+# LOCALIZATION STRINGS
+# ===========================================================================
+extraStrings:
+  - type: en-US
+    strings:
+      STR_SCOPED_AIMED_SHOT: "SCOPED SHOT"
+      STR_DEPLOYED_BIPOD_SHOT: "BIPOD SHOT"
+      STR_ENGINE_JA2S: "JA2S"
+      STR_JA2S_RANGE_VISUAL_CURSOR_TAGS: "Cursor Sight & Range Tags"
+      STR_JA2S_RANGE_VISUAL_CURSOR_TAGS_DESC: "Displays [BVR], [RANGE], [BVR+RANGE] status tags and target distance vs maximum weapon range [dist: X/max: Y] on the targeting crosshair."
+      STR_JA2S_VISUAL_LOF_INDICATOR: "Pre-Shot Line-of-Fire (LOF)"
+      STR_JA2S_VISUAL_LOF_INDICATOR_DESC: "Raycasts 3D bullet trajectory in real-time, displaying red NO LOF when blocked by obstacles."
+      STR_JA2S_SUPPRESSION_FEEDBACK: "Suppression UI Alerts"
+      STR_JA2S_SUPPRESSION_FEEDBACK_DESC: "Displays on-screen HitLog warnings when an operative is pinned or near-miss suppressed."
+  - type: en-GB
+    strings:
+      STR_SCOPED_AIMED_SHOT: "SCOPED SHOT"
+      STR_DEPLOYED_BIPOD_SHOT: "BIPOD SHOT"
+      STR_ENGINE_JA2S: "JA2S"
+      STR_JA2S_RANGE_VISUAL_CURSOR_TAGS: "Cursor Sight & Range Tags"
+      STR_JA2S_RANGE_VISUAL_CURSOR_TAGS_DESC: "Displays [BVR], [RANGE], [BVR+RANGE] status tags and target distance vs maximum weapon range [dist: X/max: Y] on the targeting crosshair."
+      STR_JA2S_VISUAL_LOF_INDICATOR: "Pre-Shot Line-of-Fire (LOF)"
+      STR_JA2S_VISUAL_LOF_INDICATOR_DESC: "Raycasts 3D bullet trajectory in real-time, displaying red NO LOF when blocked by obstacles."
+      STR_JA2S_SUPPRESSION_FEEDBACK: "Suppression UI Alerts"
+      STR_JA2S_SUPPRESSION_FEEDBACK_DESC: "Displays on-screen HitLog warnings when an operative is pinned or near-miss suppressed."

@@ -1,0 +1,9 @@
+# metadata.yml for Jagged Alliance 2 Straciatella Awareness (TFTD)
+
+name: "Jagged Alliance 2 Straciatella Awareness (TFTD)"
+id: ja2-stracciatella-awareness-tftd
+version: "1.0"
+description: "Adds Jagged Alliance 2 tactical acoustics, auditory awareness, and alert hierarchy (Green/Yellow/Red) to Terror from the Deep."
+author: "Antigravity & User"
+
+master: xcom2

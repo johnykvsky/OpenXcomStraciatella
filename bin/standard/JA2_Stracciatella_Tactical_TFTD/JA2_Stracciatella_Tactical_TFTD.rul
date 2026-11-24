@@ -1,0 +1,116 @@
+# =========================================================================
+# JA2 Stracciatella Tactical MOD for Terror from the Deep (OXCE)
+# =========================================================================
+
+# Global baseline settings
+noLOSAccuracyPenaltyGlobal: 50    # 50% penalty when firing at targets outside personal LOS
+kneelBonusGlobal: 120             # Baseline kneeling grants +20% accuracy
+allowAimHigh: true                # Enable Sub-Voxel Head / Upper Elevation Targeting (Shift key)
+aimHighAccuracyPenalty: 15        # 15% precision penalty when targeting upper profile
+aimHighElevationOffset: 6         # Sub-voxel target elevation shift
+visualLOFIndicator: true          # Dynamic crosshair LOF targeting indicator
+rangeVisualCursorTags: true       # Cursor tags ([BVR], [RANGE], [dist: X/max: Y])
+burstRecoil: true                 # Enables cumulative recoil muzzle climb on auto bursts
+burstRecoilPenalty: 15            # -15% accuracy penalty per consecutive bullet in burst
+burstElevationClimb: 1            # Sub-voxel elevation muzzle climb per shot
+symmetricalNightVision: true      # Enhances night combat through equipment & tactical parameters
+playerBaseViewDistanceAtDark: 12  # Baseline night vision before equipment enhancements
+
+# Smart Tactical AI Parameters
+ai:
+  extendedFireModeChoice: true    # Calculate accurate hit chance with distance dropoff before shooting
+  respectMaxRange: true           # Forbids wasting shots outside weapon maxRange and closes the distance
+
+items:
+  # =======================================================================
+  # SIDEARMS & PISTOLS
+  # =======================================================================
+  - type: STR_DART_PISTOL
+    maxRange: 15
+    dropoff: 4
+    noLOSAccuracyPenalty: 25
+    kneelBonus: 115
+
+  - type: STR_GAUSS_PISTOL
+    maxRange: 18
+    dropoff: 3
+    noLOSAccuracyPenalty: 30
+    kneelBonus: 115
+
+  - type: STR_SONIC_PISTOL
+    maxRange: 16
+    dropoff: 4
+    noLOSAccuracyPenalty: 30
+    kneelBonus: 115
+
+  # =======================================================================
+  # INFANTRY HARPOONS & RIFLES
+  # =======================================================================
+  - type: STR_JET_HARPOON
+    maxRange: 32
+    dropoff: 2
+    noLOSAccuracyPenalty: 15
+    kneelBonus: 120
+
+  - type: STR_GAUSS_RIFLE
+    maxRange: 36
+    dropoff: 2
+    noLOSAccuracyPenalty: 10
+    kneelBonus: 125
+
+  - type: STR_SONIC_BLASTA_RIFLE
+    maxRange: 35
+    dropoff: 2
+    noLOSAccuracyPenalty: 20
+    kneelBonus: 120
+
+  # =======================================================================
+  # HEAVY SUPPORT WEAPONS (BIPOD DEPLOYMENT VIA KNEELING)
+  # =======================================================================
+  - type: STR_GAS_CANNON
+    maxRange: 42
+    dropoff: 1
+    noLOSAccuracyPenalty: 20
+    kneelBonus: 140
+
+  - type: STR_HYDRO_JET_CANNON
+    maxRange: 40
+    dropoff: 1
+    noLOSAccuracyPenalty: 20
+    kneelBonus: 145
+
+  - type: STR_HEAVY_GAUSS
+    maxRange: 45
+    dropoff: 1
+    noLOSAccuracyPenalty: 15
+    kneelBonus: 140
+
+  - type: STR_SONIC_CANNON
+    maxRange: 48
+    dropoff: 1
+    noLOSAccuracyPenalty: 10
+    kneelBonus: 145
+
+  # =======================================================================
+  # LAUNCHERS & TORPEDOES
+  # =======================================================================
+  - type: STR_TORPEDO_LAUNCHER
+    maxRange: 55
+    dropoff: 1
+    kneelBonus: 130
+
+  - type: STR_DISRUPTOR_PULSE_LAUNCHER
+    maxRange: 60
+    dropoff: 1
+    kneelBonus: 120
+
+  - type: STR_THERMAL_SHOK_LAUNCHER
+    maxRange: 40
+    dropoff: 2
+    kneelBonus: 120
+
+  # =======================================================================
+  # TACTICAL ELECTRO-OPTICS / CHEMICAL LIGHTING
+  # =======================================================================
+  - type: STR_CHEMICAL_FLARE
+    visibilityAtDarkBonus: 4

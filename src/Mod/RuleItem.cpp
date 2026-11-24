@@ -176,7 +176,7 @@ RuleItem::RuleItem(const std::string &type, int listOrder) :
 	_recover(true), _recoverCorpse(true), _ignoreInBaseDefense(false), _ignoreInCraftEquip(true), _liveAlien(false),
 	_liveAlienPrisonType(0), _attraction(0), _flatUse(0, 1), _flatThrow(0, 1), _flatPrime(0, 1), _flatUnprime(0, 1), _arcingShot(false),
 	_experienceTrainingMode(ETM_DEFAULT), _manaExperience(0), _loadOrder(0), _listOrder(listOrder),
-	_maxRange(200), _minRange(0), _dropoff(2), _bulletSpeed(0), _explosionSpeed(0), _shotgunPellets(0), _shotgunBehaviorType(0), _shotgunSpread(100), _shotgunChoke(100),
+	_maxRange(200), _minRange(0), _dropoff(2), _bulletSpeed(0), _explosionSpeed(0), _shotgunPellets(0), _shotgunBehaviorType(0), _shotgunSpread(100), _shotgunChoke(100), _noiseFire(-1), _suppressionFactor(1), _visibilityAtDarkBonus(0),
 	_spawnUnitFaction(FACTION_NONE), _zombieUnitFaction(FACTION_HOSTILE),
 	_targetMatrix(7), _convertToCivilian(false),
 	_LOSRequired(false), _underwaterOnly(false), _landOnly(false), _psiReqiured(false), _manaRequired(false),
@@ -659,6 +659,9 @@ void RuleItem::load(const YAML::YamlNodeReader& node, Mod *mod, const ModScript&
 	mod->loadSpriteOffset(_type, _customItemPreviewIndex, reader["customItemPreviewIndex"], "CustomItemPreviews");
 	reader.tryRead("kneelBonus", _kneelBonus);
 	reader.tryRead("oneHandedPenalty", _oneHandedPenalty);
+	reader.tryRead("noiseFire", _noiseFire);
+	reader.tryRead("suppressionFactor", _suppressionFactor);
+	reader.tryRead("visibilityAtDarkBonus", _visibilityAtDarkBonus);
 	reader.tryRead("monthlySalary", _monthlySalary);
 	reader.tryRead("monthlyMaintenance", _monthlyMaintenance);
 	reader.tryRead("sprayWaypoints", _sprayWaypoints);
@@ -1456,7 +1459,7 @@ int RuleItem::getAccuracyCloseQuarters(const Mod *mod) const
  * Gets the item's accuracy penalty for out-of-LOS targets
  * @return The no-LOS accuracy penalty.
  */
-int RuleItem::getNoLOSAccuracyPenalty(Mod *mod) const
+int RuleItem::getNoLOSAccuracyPenalty(const Mod *mod) const
 {
 	return _noLOSAccuracyPenalty != -1 ? _noLOSAccuracyPenalty : mod->getNoLOSAccuracyPenaltyGlobal();
 }
@@ -2404,6 +2407,11 @@ int RuleItem::calculateLimits(int& upperLimit, int& lowerLimit, int depth, Battl
 		default:
 			break;
 		}
+	}
+
+	if ((upperLimit <= 0 || upperLimit == 200) && _maxRange > 0 && _maxRange < 200)
+	{
+		upperLimit = _maxRange;
 	}
 
 	return type == BA_THROW ? getThrowDropoff() : getDropoff();

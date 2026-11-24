@@ -1,0 +1,9 @@
+# metadata.yml for Jagged Alliance 2 Straciatella Awareness
+
+name: "Jagged Alliance 2 Straciatella Awareness"
+id: ja2-stracciatella-awareness
+version: "1.0"
+description: "Adds Jagged Alliance 2 tactical acoustics, auditory awareness, and alert hierarchy (Green/Yellow/Red) to OpenXcom: enemies hear footsteps, doors, gunfire, and explosions, investigate disturbances, and coordinate alert stances."
+author: "Antigravity & User"
+
+master: xcom1

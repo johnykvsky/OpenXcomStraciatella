@@ -88,10 +88,39 @@ OptionsAdvancedState::OptionsAdvancedState(OptionsOrigin origin) : OptionsBaseSt
 	_btnOXCE->setGroup(&_owner);
 	_btnOXCE->onMousePress((ActionHandler)&OptionsAdvancedState::btnGroupPress, SDL_BUTTON_LEFT);
 
-	_btnOTHER->setText(tr("STR_ENGINE_OTHER")); // rename in your fork
+	_btnOTHER->setText(tr("STR_ENGINE_JA2S"));
 	_btnOTHER->setGroup(&_owner);
 	_btnOTHER->onMousePress((ActionHandler)&OptionsAdvancedState::btnGroupPress, SDL_BUTTON_LEFT);
-	_btnOTHER->setVisible(false); // enable in your fork
+
+	bool isJA2SEnabled = false;
+	for (const auto& pair : Options::mods)
+	{
+		if (pair.second)
+		{
+			if (pair.first.find("ja2") != std::string::npos ||
+				pair.first.find("JA2") != std::string::npos ||
+				pair.first.find("Stracciatella") != std::string::npos ||
+				pair.first.find("stracciatella") != std::string::npos)
+			{
+				isJA2SEnabled = true;
+				break;
+			}
+		}
+	}
+	if (!isJA2SEnabled && _game && _game->getMod())
+	{
+		if (_game->getMod()->isRangeVisualCursorTagsRuleset() ||
+			_game->getMod()->isVisualLOFIndicatorRuleset() ||
+			_game->getMod()->isAcousticSimulationEnabled() ||
+			_game->getMod()->isNearMissSuppressionEnabled() ||
+			_game->getMod()->isInteractiveReactionEnabled() ||
+			_game->getMod()->isPeripheralVisionEnabled() ||
+			_game->getMod()->isBurstRecoilEnabled())
+		{
+			isJA2SEnabled = true;
+		}
+	}
+	_btnOTHER->setVisible(isJA2SEnabled);
 
 	// how much room do we need for YES/NO
 	Text text = Text(100, 9, 0, 0);
@@ -251,9 +280,35 @@ void OptionsAdvancedState::addSettings(const std::vector<OptionInfo> &settings)
 	{
 		std::string name = tr(optionInfo.description());
 		std::string value;
+		bool disabledByMod = false;
+
+		if (optionInfo.id() == "ja2sAllowAimHigh")
+		{
+			if (!_game->getMod()->isAllowAimHighRuleset()) disabledByMod = true;
+		}
+		else if (optionInfo.id() == "ja2sRangeVisualCursorTags")
+		{
+			if (!_game->getMod()->isRangeVisualCursorTagsRuleset()) disabledByMod = true;
+		}
+		else if (optionInfo.id() == "ja2sVisualLOFIndicator")
+		{
+			if (!_game->getMod()->isVisualLOFIndicatorRuleset()) disabledByMod = true;
+		}
+		else if (optionInfo.id() == "ja2sSuppressionVisualFeedback")
+		{
+			if (!_game->getMod()->isNearMissSuppressionEnabled()) disabledByMod = true;
+		}
+
 		if (optionInfo.type() == OPTION_BOOL)
 		{
-			value = *optionInfo.asBool() ? tr("STR_YES") : tr("STR_NO");
+			if (disabledByMod)
+			{
+				value = tr("STR_NO");
+			}
+			else
+			{
+				value = *optionInfo.asBool() ? tr("STR_YES") : tr("STR_NO");
+			}
 		}
 		else if (optionInfo.type() == OPTION_INT)
 		{
@@ -262,9 +317,9 @@ void OptionsAdvancedState::addSettings(const std::vector<OptionInfo> &settings)
 			value = ss.str();
 		}
 		_lstOptions->addRow(2, name.c_str(), value.c_str());
-		// grey out fixed options
+		// grey out fixed options or options whose mod is disabled
 		auto search = fixeduserOptions.find(optionInfo.id());
-		if (search != fixeduserOptions.end())
+		if (search != fixeduserOptions.end() || disabledByMod)
 		{
 			_lstOptions->setRowColor(_lstOptions->getLastRowIndex(), _greyedOutColor);
 		}
@@ -329,6 +384,12 @@ void OptionsAdvancedState::lstOptionsClick(Action *action)
 	{
 		return;
 	}
+
+	// options disabled because required mod is off cannot be clicked
+	if (setting->id() == "ja2sAllowAimHigh" && !_game->getMod()->isAllowAimHighRuleset()) return;
+	if (setting->id() == "ja2sRangeVisualCursorTags" && !_game->getMod()->isRangeVisualCursorTagsRuleset()) return;
+	if (setting->id() == "ja2sVisualLOFIndicator" && !_game->getMod()->isVisualLOFIndicatorRuleset()) return;
+	if (setting->id() == "ja2sSuppressionVisualFeedback" && !_game->getMod()->isNearMissSuppressionEnabled()) return;
 
 	std::string settingText;
 	if (setting->type() == OPTION_BOOL)

@@ -247,6 +247,25 @@ private:
 	int _kneelBonusGlobal, _oneHandedPenaltyGlobal;
 	int _enableCloseQuartersCombat, _closeQuartersAccuracyGlobal, _closeQuartersTuCostGlobal, _closeQuartersEnergyCostGlobal, _closeQuartersSneakUpGlobal;
 	int _noLOSAccuracyPenaltyGlobal;
+	bool _allowAimHigh;
+	int _aimHighAccuracyPenalty, _aimHighElevationOffset;
+	bool _visualLOFIndicator;
+	bool _rangeVisualCursorTags;
+	bool _acousticSimulation;
+	int _acousticBlipDuration;
+	int _acousticWallAttenuation, _acousticDoorAttenuation;
+	int _noiseMovementWalk, _noiseMovementRun, _noiseMovementSneak, _noiseMovementFly, _noiseDoorOpen, _noiseDoorSmash, _noiseExplosion;
+	bool _peripheralVision;
+	double _peripheralVisionRatio;
+	bool _burstRecoil;
+	int _burstRecoilPenalty, _burstElevationClimb;
+	bool _symmetricalNightVision;
+	int _playerBaseViewDistanceAtDark;
+	bool _nearMissSuppression, _suppressionVisualFeedback;
+	int _nearMissRadius, _suppressionMaxTUPenalty, _suppressionMoraleLoss, _suppressionKneelThreshold;
+	bool _interactiveReaction, _reactionAIModeSelection;
+	int _reactionAutoRange, _reactionAimedRange;
+	bool _reactionImpactDetonation, _reactionAllowBeltGrenade, _reactionAllowPass;
 	int _explodeInventoryGlobal;
 	int _surrenderMode;
 	int _bughuntMinTurn, _bughuntMaxEnemies, _bughuntRank, _bughuntLowMorale, _bughuntTimeUnitsLeft;
@@ -914,6 +933,60 @@ public:
 	int getCloseQuartersSneakUpGlobal() const { return _closeQuartersSneakUpGlobal; }
 	/// Gets the default accuracy penalty for having no LOS to the target (default = 0 is no penalty)
 	int getNoLOSAccuracyPenaltyGlobal() const { return _noLOSAccuracyPenaltyGlobal; }
+	/// Generic Sub-Voxel Targeting Hooks
+	bool isAllowAimHighRuleset() const { return _allowAimHigh; }
+	bool isAllowAimHigh() const { return _allowAimHigh && Options::ja2sAllowAimHigh; }
+	int getAimHighAccuracyPenalty() const { return _aimHighAccuracyPenalty; }
+	int getAimHighElevationOffset() const { return _aimHighElevationOffset; }
+	bool isVisualLOFIndicatorRuleset() const { return _visualLOFIndicator; }
+	bool isVisualLOFIndicator() const { return _visualLOFIndicator && Options::ja2sVisualLOFIndicator; }
+	/// Generic Range & LOS Visual Indicators
+	bool isRangeVisualCursorTagsRuleset() const { return _rangeVisualCursorTags; }
+	bool isRangeVisualCursorTagsEnabled() const { return _rangeVisualCursorTags && Options::ja2sRangeVisualCursorTags; }
+	/// Generic Acoustic Simulation Hooks
+	bool isAcousticSimulationEnabled() const { return _acousticSimulation; }
+	bool getTacticalAcoustics() const { return _acousticSimulation; }
+	bool isAcousticVisualBlipsEnabled() const { return false; }
+	int getAcousticBlipDuration() const { return _acousticBlipDuration; }
+	int getAcousticWallAttenuation() const { return _acousticWallAttenuation; }
+	int getAcousticDoorAttenuation() const { return _acousticDoorAttenuation; }
+	int getNoiseMovementWalk() const { return _noiseMovementWalk; }
+	int getNoiseMovementRun() const { return _noiseMovementRun; }
+	int getNoiseMovementSneak() const { return _noiseMovementSneak; }
+	int getNoiseMovementFly() const { return _noiseMovementFly; }
+	int getNoiseDoorOpen() const { return _noiseDoorOpen; }
+	int getNoiseDoorSmash() const { return _noiseDoorSmash; }
+	int getNoiseExplosion() const { return _noiseExplosion; }
+	/// Generic Human Vision Hooks
+	bool isPeripheralVisionEnabled() const { return _peripheralVision; }
+	double getPeripheralVisionRatio() const { return _peripheralVisionRatio; }
+	bool isSymmetricalNightVisionEnabled() const { return _symmetricalNightVision; }
+	int getPlayerBaseViewDistanceAtDark() const { return _playerBaseViewDistanceAtDark; }
+	/// Generic Firearm Recoil & Burst Hooks
+	bool isBurstRecoilEnabled() const { return _burstRecoil; }
+	int getBurstRecoilPenalty() const { return _burstRecoilPenalty; }
+	int getBurstElevationClimb() const { return _burstElevationClimb; }
+	/// Generic Near-Miss / Suppression Hooks
+	bool isNearMissSuppressionEnabled() const { return _nearMissSuppression; }
+	bool getTacticalSuppression() const { return _nearMissSuppression; }
+	bool isSuppressionVisualFeedbackEnabled() const { return _suppressionVisualFeedback && Options::ja2sSuppressionVisualFeedback; }
+	int getNearMissRadius() const { return _nearMissRadius; }
+	int getSuppressionRadius() const { return _nearMissRadius; }
+	int getSuppressionMaxTUPenalty() const { return _suppressionMaxTUPenalty; }
+	int getSuppressionMoraleLoss() const { return _suppressionMoraleLoss; }
+	int getSuppressionKneelThreshold() const { return _suppressionKneelThreshold; }
+	/// Generic Interactive Reaction Pipeline Hooks
+	bool isInteractiveReactionEnabled() const { return _interactiveReaction; }
+	bool getTacticalReaction() const { return _interactiveReaction; }
+	bool isReactionAIModeSelection() const { return _reactionAIModeSelection; }
+	int getReactionAutoRange() const { return _reactionAutoRange; }
+	int getReactionAimedRange() const { return _reactionAimedRange; }
+	bool isReactionImpactDetonation() const { return _reactionImpactDetonation; }
+	bool getReactionGrenadeImmediateDetonation() const { return _reactionImpactDetonation; }
+	bool isReactionAllowBeltGrenade() const { return _reactionAllowBeltGrenade; }
+	bool getReactionAllowBeltGrenade() const { return _reactionAllowBeltGrenade; }
+	bool isReactionAllowPass() const { return _reactionAllowPass; }
+	bool getReactionAllowPass() const { return _reactionAllowPass; }
 	/// Gets the default setting for primed grenades exploding in the inventory (default = 0 is no explosion)
 	int getExplodeInventoryGlobal() const { return _explodeInventoryGlobal; }
 	/// Gets the surrender mode (default = 0).

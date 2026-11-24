@@ -198,10 +198,99 @@ int Projectile::calculateTrajectory(double accuracy, const Position& originVoxel
 
 	// apply some accuracy modifiers.
 	// This will results in a new target voxel
+	if (_mod->isAllowAimHigh() && _save->isShiftPressed(true) && _action.actor->getFaction() == FACTION_PLAYER && _action.type != BA_THROW && _action.type != BA_LAUNCH)
+	{
+		// Aim High: precision penalty for aiming at smaller head/upper profile
+		int penalty = _mod->getAimHighAccuracyPenalty();
+		accuracy *= (100.0 - penalty) / 100.0;
+	}
+
+	// Generic Recoil & Cumulative Burst Climb Hook
+	if (_mod->isBurstRecoilEnabled() && _action.type == BA_AUTOSHOT && _action.autoShotCounter > 1)
+	{
+		int shotIndex = _action.autoShotCounter - 1;
+		int penalty = shotIndex * _mod->getBurstRecoilPenalty();
+
+		// Bipod / Kneeling mitigation: kneeling with high kneel bonus (e.g. 145%) cancels recoil
+		if (_action.actor->isKneeled())
+		{
+			int kneelBonus = _mod->getKneelBonusGlobal();
+			if (_action.weapon && _action.weapon->getRules())
+			{
+				kneelBonus = _action.weapon->getRules()->getKneelBonus(_mod);
+			}
+			if (kneelBonus > 100)
+			{
+				penalty = std::max(0, penalty - (kneelBonus - 100));
+			}
+		}
+		// Strength mitigation: strong soldiers control recoil better
+		int str = _action.actor->getBaseStats()->strength;
+		if (str > 40)
+		{
+			penalty = std::max(0, penalty - (str - 40) / 4);
+		}
+
+		accuracy *= (100.0 - std::min(80, penalty)) / 100.0;
+
+		// Physical muzzle climb (elevation shifts upward per shot)
+		int climb = _mod->getBurstElevationClimb();
+		if (climb > 0)
+		{
+			_targetVoxel.z += shotIndex * climb;
+		}
+	}
 	applyAccuracy(originVoxel, &_targetVoxel, accuracy, false, extendLine);
 
 	// finally do a line calculation and store this trajectory.
-	return _save->getTileEngine()->calculateLineVoxel(originVoxel, _targetVoxel, true, &_trajectory, bu);
+	int trajectoryResult = _save->getTileEngine()->calculateLineVoxel(originVoxel, _targetVoxel, true, &_trajectory, bu);
+	applySuppression();
+	return trajectoryResult;
+}
+
+/**
+ * Applies suppression points to units near the bullet path.
+ */
+void Projectile::applySuppression()
+{
+	if (!_mod->isNearMissSuppressionEnabled() || _trajectory.empty())
+	{
+		return;
+	}
+
+	BattleUnit *firer = _action.actor;
+	UnitFaction firerFaction = firer ? firer->getFaction() : FACTION_NONE;
+	int factor = 1;
+	if (_action.weapon && _action.weapon->getRules())
+	{
+		factor = _action.weapon->getRules()->getSuppressionFactor();
+	}
+	int radius = _mod->getNearMissRadius();
+
+	std::unordered_set<BattleUnit*> suppressedThisBullet;
+
+	for (const auto& voxel : _trajectory)
+	{
+		Position tilePos = voxel.toTile();
+		for (int dx = -radius; dx <= radius; ++dx)
+		{
+			for (int dy = -radius; dy <= radius; ++dy)
+			{
+				Tile *t = _save->getTile(tilePos + Position(dx, dy, 0));
+				if (!t) continue;
+				BattleUnit *target = t->getUnit();
+				if (target && target != firer && !target->isOut() && suppressedThisBullet.find(target) == suppressedThisBullet.end())
+				{
+					// If friendly, only suppress if far enough from shooter
+					if (target->getFaction() != firerFaction || Position::distance2d(firer->getPosition(), target->getPosition()) > 3)
+					{
+						target->addSuppression(factor, firer, _save);
+						suppressedThisBullet.insert(target);
+					}
+				}
+			}
+		}
+	}
 }
 
 /**

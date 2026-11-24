@@ -1,0 +1,9 @@
+# metadata.yml for Jagged Alliance 2 Straciatella Suppression (TFTD)
+
+name: "Jagged Alliance 2 Straciatella Suppression (TFTD)"
+id: ja2-stracciatella-suppression-tftd
+version: "1.0"
+description: "Brings Jagged Alliance 2 bullet suppression, pinning fire, and forced defensive kneeling to Terror from the Deep."
+author: "Antigravity & User"
+
+master: xcom2

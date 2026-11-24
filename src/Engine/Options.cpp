@@ -576,7 +576,10 @@ void createOptionsOTHER()
 
 void createAdvancedOptionsOTHER()
 {
-	// your fork's advanced options here
+	_info.push_back(OptionInfo(OPTION_JA2S, "ja2sAllowAimHigh", &ja2sAllowAimHigh, true, "STR_JA2S_ALLOW_AIM_HIGH", "STR_BATTLESCAPE"));
+	_info.push_back(OptionInfo(OPTION_JA2S, "ja2sRangeVisualCursorTags", &ja2sRangeVisualCursorTags, true, "STR_JA2S_RANGE_VISUAL_CURSOR_TAGS", "STR_BATTLESCAPE"));
+	_info.push_back(OptionInfo(OPTION_JA2S, "ja2sVisualLOFIndicator", &ja2sVisualLOFIndicator, true, "STR_JA2S_VISUAL_LOF_INDICATOR", "STR_BATTLESCAPE"));
+	_info.push_back(OptionInfo(OPTION_JA2S, "ja2sSuppressionVisualFeedback", &ja2sSuppressionVisualFeedback, true, "STR_JA2S_SUPPRESSION_FEEDBACK", "STR_BATTLESCAPE"));
 }
 
 void createControlsOTHER()
@@ -900,17 +903,11 @@ void refreshMods()
 	}
 	Log(LOG_INFO) << "Scanning user mods in '" << getUserFolder() << "'...";
 	FileMap::scanModDir(getUserFolder(), "mods", false);
-#ifdef __MOBILE__
-	if (getDataFolder() == getUserFolder())
-	{
-		Log(LOG_INFO) << "Skipped scanning user mods in the data folder, because it's the same folder as the user folder.";
-	}
-	else
+	if (getDataFolder() != getUserFolder())
 	{
 		Log(LOG_INFO) << "Scanning user mods in '" << getDataFolder() << "'...";
 		FileMap::scanModDir(getDataFolder(), "mods", false);
 	}
-#endif
 
 	// Check mods' dependencies on other mods and extResources (UFO, TFTD, etc),
 	// also breaks circular dependency loops.

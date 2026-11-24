@@ -96,6 +96,8 @@ set ( battlescape_src
   Battlescape/ExtendedInventoryLinksState.cpp
   Battlescape/InfoboxOKState.cpp
   Battlescape/InfoboxState.cpp
+  Battlescape/InteractiveReactionBState.cpp
+  Battlescape/InteractiveReactionState.cpp
   Battlescape/Inventory.cpp
   Battlescape/InventoryLoadState.cpp
   Battlescape/InventoryPersonalState.cpp

@@ -7,7 +7,7 @@ This mod brings **projectile suppression, pinning fire, reaction disruption, for
 ## 1. Features Summary
 
 1. **3D Voxel Trajectory Suppression (`nearMissSuppression: true`)**: Traces projectile flight paths in 3D voxel space; near-misses apply suppression points.
-2. **Time Unit Penalties & Pinning**: Suppressed units lose up to **$25\%$ of their Time Units** on their next turn.
+2. **Time Unit Penalties & Pinning**: Suppressed units lose up to **25% of their Time Units** on their next turn.
 3. **Immediate Overwatch Disruption**: Deducts current TUs, breaking deadly alien reaction overwatch mid-stride.
 4. **Forced Defensive Kneeling ("Hit the Dirt!") (`suppressionKneelThreshold: 3`)**: Standing units accumulating 3+ suppression points drop to their knees.
 5. **Morale Shock (`suppressionMoraleLoss: 3`)**: Heavy incoming bursts accelerate panic on unsupported units.

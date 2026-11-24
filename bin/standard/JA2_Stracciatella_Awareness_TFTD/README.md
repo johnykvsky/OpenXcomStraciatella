@@ -6,7 +6,7 @@ This mod brings **tactical acoustics, auditory awareness, alert-based patrol inv
 
 ## 1. Features Summary
 
-1. **Acoustic Simulation (`acousticSimulation: true`)**: Physical actions emit sound waves that propagate through 3D space with distance attenuation and structural muffling (doors $-6$, walls $-10$).
+1. **Acoustic Simulation (`acousticSimulation: true`)**: Physical actions emit sound waves that propagate through 3D space with distance attenuation and structural muffling (doors -6, walls -10).
 2. **Dynamic Auditory AI Noise Tracking**: Aliens hearing disturbances log coordinates and investigate.
 3. **~180° Peripheral Vision (`peripheralVision: true`)**: Detects movement in a 180° forward arc at 50% max sight range.
 4. **3-Tier Alert State Machine**: `STATUS_GREEN` (Patrol), `STATUS_YELLOW` (Investigating noise), `STATUS_RED` (Combat ready).

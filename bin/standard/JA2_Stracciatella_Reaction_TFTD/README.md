@@ -10,7 +10,7 @@ This mod brings **interactive interrupts, tactical weapon mode selection, cooked
 2. **Physical Inventory Authenticity (`reactionAllowBeltGrenade: true`)**: Grenades can be reaction-thrown from hands or quick-draw belt.
 3. **Cooked Grenades (`reactionImpactDetonation: true`)**: Reaction-thrown grenades detonate immediately upon impact ("cooked grenade"); dye grenades deploy instant smoke/dye cover.
 4. **Hold Fire / Pass (`reactionAllowPass: true`)**: Conserves Time Units without breaking ambush positioning.
-5. **Smart Alien AI Reactions (`reactionAIModeSelection: true`)**: Enemies unleash point-blank Auto Bursts at close range ($\le 6$ tiles) and take precise Aimed Shots at sniper range ($\ge 15$ tiles).
+5. **Smart Alien AI Reactions (`reactionAIModeSelection: true`)**: Enemies unleash point-blank Auto Bursts at close range (<= 6 tiles) and take precise Aimed Shots at sniper range (>= 15 tiles).
 
 ---
 

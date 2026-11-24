@@ -7,15 +7,15 @@ This mod brings **tactical acoustics, auditory awareness, alert-based patrol inv
 ## 1. Features Summary
 
 1. **Physical Sound Propagation (`acousticSimulation: true`)**:
-   - Physical actions emit sound waves that travel through 3D space with distance attenuation ($-1$ volume per tile in open air).
-   - Structural barriers muffle sound: **$-6$ volume** through closed doors (`acousticDoorAttenuation: 6`) and **$-10$ volume** through solid walls (`acousticWallAttenuation: 10`).
+   - Physical actions emit sound waves that travel through 3D space with distance attenuation (-1 volume per tile in open air).
+   - Structural barriers muffle sound: **-6 volume** through closed doors (`acousticDoorAttenuation: 6`) and **-10 volume** through solid walls (`acousticWallAttenuation: 10`).
    - Action noise profiles: Walking (6 tiles), Running (14 tiles), Door Creak (4 tiles), Smashed Door (15 tiles), Rifle Fire (35 tiles), Heavy Explosions (55 tiles).
 2. **Dynamic Auditory AI Noise Tracking**:
    - When an enemy or player makes noise that reaches an operative or guard (`effVolume > 0`), the hearing unit records the 3D map coordinates (`_noiseTarget`).
    - Guards in `STATUS_YELLOW` or `STATUS_RED` suspend regular patrol routes to actively pathfind toward and investigate the disturbance.
 3. **Realistic ~180° Peripheral Vision (`peripheralVision: true`)**:
    - Replaces the unnatural 90° tunnel vision with a realistic forward half-plane (~180° arc).
-   - Detects movement, shadows, and weapon flashes on flanks at **$50\%$ of normal sight range** (`peripheralVisionRatio: 0.5`).
+   - Detects movement, shadows, and weapon flashes on flanks at **50% of normal sight range** (`peripheralVisionRatio: 0.5`).
 4. **3-Tier Alert State Machine**:
    - `STATUS_GREEN` (Patrol / Unaware): Standard unalerted patrol routines; guards walk looking straight ahead.
    - `STATUS_YELLOW` (Suspicious / Investigating): Triggered by hearing non-combat noise or peripheral movement. Guards log sound coordinates, break patrol, investigate, and scan the area. Decays after 2 quiet turns.

@@ -18,7 +18,7 @@ In vanilla OpenXcom (1994), **Reaction Fire** is entirely automated and rigid:
 3. **Prepared Grenade Reaction (Option A)**: Lob a grenade directly at the enemy. Reaction-thrown grenades **detonate immediately on impact** ("cooked grenade"), burst into instant smoke clouds, or arm proximity mines.
 4. **Physical Inventory Authenticity**: Grenade throws are permitted from **Hand** or **Quick Belt** (with 1 free hand). Digging into heavy backpacks during a split-second enemy step is strictly locked out.
 5. **Hold Fire / Pass**: Conserve your soldier's TUs and concealment without giving away your ambush position.
-6. **Smart Alien AI Reactions**: Enemies unleash lethal Auto bursts at close quarters ($\le 6$ tiles) and take precise Aimed sniper shots at extreme range ($\ge 15$ tiles).
+6. **Smart Alien AI Reactions**: Enemies unleash lethal Auto bursts at close quarters (<= 6 tiles) and take precise Aimed sniper shots at extreme range (>= 15 tiles).
 
 ---
 
@@ -34,7 +34,7 @@ An interrupt does **not** occur automatically just because an enemy comes into v
 ### 2. The Reaction Score Contest (The Initiative Roll)
 Every time an alien takes a micro-step, turns, or performs an action in sight of your soldier, the engine calculates a **Reaction Score**:
 
-$$\text{Reaction Score} = \text{Reactions Stat} \times \frac{\text{Current Remaining TUs}}{\text{Max TUs}}$$
+`Reaction Score = Reactions Stat * (Current Remaining TUs / Max TUs)`
 
 * To trigger an interrupt, **your soldier’s Reaction Score must be greater than or equal to the moving enemy's Reaction Score**.
 * **Why this matters**:
@@ -89,10 +89,10 @@ During an interactive interrupt, accessing inventory items is governed by strict
 
 | Situation | Status | Mechanics & TU Cost |
 | :--- | :---: | :--- |
-| **Situation 1A: Primed in Hand** | **Allowed** | Incurs only `costThrow` ($\approx 25\%$ Max TUs, $\sim 14\text{--}18$ TUs). Instant release into alien path. |
-| **Situation 1B: Unprimed in Hand** | **Allowed** | Incurs `costPrime` ($15$ TUs) + `costThrow`. Soldier arms the grenade and lobs it ($\approx 30\text{--}35$ TUs). |
-| **Situation 2A: Grenade on Belt (1 Hand Free)** | **Allowed** | Incurs Quick-Draw ($8$ TUs) + Prime ($15$ TUs) + Throw ($\sim 16$ TUs) = $\approx 38$ TUs. Transferred to free hand. |
-| **Situation 2B: Grenade in Backpack (1 Hand Free)** | **Forbidden** | Rummaging through a backpack costs $24+$ TUs, pushing total cost over $58+$ TUs. Unfeasible during a 4-TU enemy step. |
+| **Situation 1A: Primed in Hand** | **Allowed** | Incurs only `costThrow` (~25% Max TUs, ~14–18 TUs). Instant release into alien path. |
+| **Situation 1B: Unprimed in Hand** | **Allowed** | Incurs `costPrime` (15 TUs) + `costThrow`. Soldier arms the grenade and lobs it (~30–35 TUs). |
+| **Situation 2A: Grenade on Belt (1 Hand Free)** | **Allowed** | Incurs Quick-Draw (8 TUs) + Prime (15 TUs) + Throw (~16 TUs) = ~38 TUs. Transferred to free hand. |
+| **Situation 2B: Grenade in Backpack (1 Hand Free)** | **Forbidden** | Rummaging through a backpack costs 24+ TUs, pushing total cost over 58+ TUs. Unfeasible during a 4-TU enemy step. |
 | **Situation 3: Both Hands Full** | **Forbidden** | Cannot manipulate or draw a grenade without dropping equipped weapons. |
 
 ---
@@ -151,7 +151,7 @@ The companion mod **`JA2_Stracciatella_Reaction_TFTD`** enables interactive reac
   - **Particle Displacement Grenades**: Instant cloud dispersion to break line-of-sight underwater.
   - **Proximity Mines**: Arms immediately upon touching the seabed.
 * **AI Reaction Ranges**:
-  - Aquatic aliens fire deadly Auto Bursts at $\le 6$ tiles and take calculated Aimed Shots at $\ge 15$ tiles.
+  - Aquatic aliens fire deadly Auto Bursts at <= 6 tiles and take calculated Aimed Shots at >= 15 tiles.
 
 ---
 
@@ -161,8 +161,8 @@ The companion mod **`JA2_Stracciatella_Reaction_TFTD`** enables interactive reac
 | :--- | :---: | :---: | :--- |
 | `interactiveReaction` | `false` | `true` | Enables interactive modal prompt for player reactions. |
 | `reactionAIModeSelection` | `false` | `true` | Enables intelligent mode selection for AI reactions. |
-| `reactionAutoRange` | `0` | `6` | Distance threshold for AI auto burst reactions ($\le 6$ tiles). |
-| `reactionAimedRange` | `0` | `15` | Distance threshold for AI aimed shot reactions ($\ge 15$ tiles). |
+| `reactionAutoRange` | `0` | `6` | Distance threshold for AI auto burst reactions (<= 6 tiles). |
+| `reactionAimedRange` | `0` | `15` | Distance threshold for AI aimed shot reactions (>= 15 tiles). |
 | `reactionImpactDetonation` | `false` | `true` | Reaction thrown grenades detonate immediately upon landing. |
 | `reactionAllowBeltGrenade` | `false` | `true` | Allows quick-draw belt grenades if one hand is free. |
 | `reactionAllowPass` | `false` | `true` | Enables Hold Fire / Pass option. |
@@ -172,7 +172,7 @@ The companion mod **`JA2_Stracciatella_Reaction_TFTD`** enables interactive reac
 ## 11. How to Enable / Disable
 
 1. Start **OpenXcom** (`make ufo`, `make tftd`, or `make openxcom`).
-2. Go to **Options** $\rightarrow$ **Mods**.
+2. Go to **Options** -> **Mods**.
 3. Under the active master mod:
    - For **UFO / xcom1**: Check `[X] Jagged Alliance 2 Straciatella Reaction`
    - For **TFTD / xcom2**: Check `[X] Jagged Alliance 2 Straciatella Reaction TFTD`

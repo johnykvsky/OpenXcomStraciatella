@@ -49,22 +49,22 @@ stateDiagram-v2
 ### 2.2 Tactical Acoustics & Sound Propagation
 Every physical action emits sound with a specific volume. Sound decays across distance and is muffled by physical structures:
 
-$$\text{EffVolume} = (\text{BaseVolume} \times \text{NoiseFactor}) + \text{HearingBonus} - \text{DistanceInTiles} - \text{Attenuation}_{\text{Walls}} - \text{Attenuation}_{\text{Doors}}$$
+`EffVolume = (BaseVolume * NoiseFactor) + HearingBonus - DistanceInTiles - Attenuation_Walls - Attenuation_Doors`
 
-- **Free-Air Attenuation**: $-1$ volume per tile traveled.
-- **Closed Doors**: Muffles sound by **$-6$ volume** (`acousticDoorAttenuation: 6`).
-- **Solid Structural Walls**: Penetrating a solid wall or floor drops sound by **$-10$ volume** (`acousticWallAttenuation: 10`).
+- **Free-Air Attenuation**: -1 volume per tile traveled.
+- **Closed Doors**: Muffles sound by **-6 volume** (`acousticDoorAttenuation: 6`).
+- **Solid Structural Walls**: Penetrating a solid wall or floor drops sound by **-10 volume** (`acousticWallAttenuation: 10`).
 - **Species Noise Factor (`noiseMovementFactor`)**: Modifies movement noise based on species anatomy (e.g. Snakeman `0.5`, Sectopod `2.0`).
 - **Auditory Hearing Bonus (`hearingBonus`)**: Modifies listening acuity per unit/armor (e.g. Reaper/Chryssalid `+4` to `+5`, sealed Muton helmet `-2`).
 
 #### Acoustic Noise Profiles:
 | Action / Item | Base Volume | Open-Air Range | Range Through 1 Wall | Resulting Alert |
 | :--- | :---: | :---: | :---: | :---: |
-| **Airborne Anti-Grav Flight** | 0 | 0 tiles (Silent) | Silent ($0$) | None |
-| **Sneaking Creep (<kbd>Alt</kbd> Key)** | 1 | 1 tile | Silent ($0$) | `STATUS_YELLOW` |
-| **Walking Footstep** | 6 | 6 tiles | Silent ($0$) | `STATUS_YELLOW` |
+| **Airborne Anti-Grav Flight** | 0 | 0 tiles (Silent) | Silent (0) | None |
+| **Sneaking Creep (<kbd>Alt</kbd> Key)** | 1 | 1 tile | Silent (0) | `STATUS_YELLOW` |
+| **Walking Footstep** | 6 | 6 tiles | Silent (0) | `STATUS_YELLOW` |
 | **Running Sprint** | 14 | 14 tiles | 4 tiles | `STATUS_YELLOW` |
-| **Door Opening** | 4 | 4 tiles | Silent ($0$) | `STATUS_YELLOW` |
+| **Door Opening** | 4 | 4 tiles | Silent (0) | `STATUS_YELLOW` |
 | **Forced / Smashed Door** | 15 | 15 tiles | 5 tiles | `STATUS_YELLOW` |
 | **Pistol Fire** | 25 | 25 tiles | 15 tiles | `STATUS_RED` |
 | **Laser Pistol Fire** | 20 | 20 tiles | 10 tiles | `STATUS_RED` |
@@ -94,7 +94,7 @@ $$\text{EffVolume} = (\text{BaseVolume} \times \text{NoiseFactor}) + \text{Heari
 - **The JA2 Mechanic (`peripheralVision: true`)**:
   - **Focal Cone (90°)**: 100% full view distance (20 tiles Day / 12–16 tiles Night).
   - **Peripheral Arc (~180°)**: The entire forward half-plane (from 9 o'clock to 3 o'clock).
-  - **Detection Range Ratio (`peripheralVisionRatio: 0.5`)**: Peripheral vision detects movement, shadows, and weapon flashes at **$50\%$ of normal distance**.
+  - **Detection Range Ratio (`peripheralVisionRatio: 0.5`)**: Peripheral vision detects movement, shadows, and weapon flashes at **50% of normal distance**.
   - **Alert Escalation**: Catching peripheral movement escalates a soldier or guard's status to `STATUS_YELLOW`, prompting them to turn and focus their primary cone on the threat.
 
 ---
@@ -104,7 +104,7 @@ $$\text{EffVolume} = (\text{BaseVolume} \times \text{NoiseFactor}) + \text{Heari
 1. **True Tactical Infiltration**:
    - Walking instead of sprinting keeps operatives completely silent through walls. You can quietly stack up outside doors without waking guards.
 2. **Breaching Discipline**:
-   - Gently opening doors is quiet ($4$ tiles), while blasting open doors with grenades alerts every alien in the building.
+   - Gently opening doors is quiet (4 tiles), while blasting open doors with grenades alerts every alien in the building.
 3. **Sound Traps & Distractions**:
    - Intentionally fire a loud weapon or smash a window to lure suspicious aliens into pre-aimed kill zones.
 4. **No More Blind Flanks**:
@@ -129,10 +129,10 @@ The companion mod **`JA2_Stracciatella_Awareness_TFTD`** configures underwater a
 
 | Action / TFTD Weapon | Base Volume | Open-Water Range | Range Through 1 Bulkhead | Resulting Alert |
 | :--- | :---: | :---: | :---: | :---: |
-| **Silent Swimming / Sneak (<kbd>Alt</kbd>)** | 1 | 1 tile | Silent ($0$) | `STATUS_YELLOW` |
-| **Diver Walking / Swimming** | 6 | 6 tiles | Silent ($0$) | `STATUS_YELLOW` |
+| **Silent Swimming / Sneak (<kbd>Alt</kbd>)** | 1 | 1 tile | Silent (0) | `STATUS_YELLOW` |
+| **Diver Walking / Swimming** | 6 | 6 tiles | Silent (0) | `STATUS_YELLOW` |
 | **Sprinting / Rushing** | 14 | 14 tiles | 4 tiles | `STATUS_YELLOW` |
-| **Submarine Hatch Opening** | 4 | 4 tiles | Silent ($0$) | `STATUS_YELLOW` |
+| **Submarine Hatch Opening** | 4 | 4 tiles | Silent (0) | `STATUS_YELLOW` |
 | **Smashed Hatch / Breach** | 15 | 15 tiles | 5 tiles | `STATUS_YELLOW` |
 | **Dart Gun / Pistol** | 20 | 20 tiles | 10 tiles | `STATUS_RED` |
 | **Harpoon Gun** | 22 | 22 tiles | 12 tiles | `STATUS_RED` |
@@ -167,7 +167,7 @@ The companion mod **`JA2_Stracciatella_Awareness_TFTD`** configures underwater a
 ## 7. How to Enable / Disable
 
 1. Start **OpenXcom** (`make ufo`, `make tftd`, or `make openxcom`).
-2. Go to **Options** $\rightarrow$ **Mods**.
+2. Go to **Options** -> **Mods**.
 3. Under the active master mod:
    - For **UFO / xcom1**: Check `[X] Jagged Alliance 2 Straciatella Awareness`
    - For **TFTD / xcom2**: Check `[X] Jagged Alliance 2 Straciatella Awareness TFTD`

@@ -15,7 +15,7 @@ An interrupt does **not** occur automatically just because an enemy comes into v
 
 2. **The Reaction Score Contest (The Initiative Roll)**:
    - Every time an alien takes a micro-step, turns, or performs an action in sight of your soldier, the engine calculates:
-     $$\text{Reaction Score} = \text{Reactions Stat} \times \frac{\text{Current Remaining TUs}}{\text{Max TUs}}$$
+     `Reaction Score = Reactions Stat * (Current Remaining TUs / Max TUs)`
    - Your soldier's Reaction Score must be **greater than or equal to** the moving enemy's score.
    - As aliens spend TUs walking and opening doors, their score drops until your soldier interrupts them mid-stride. Saving more TUs on your turn increases your interrupt score!
 
@@ -40,13 +40,13 @@ An interrupt does **not** occur automatically just because an enemy comes into v
 4. **Hold Fire / Pass (`reactionAllowPass: true`)**:
    - Conserves Time Units and preserves sniper concealment without breaking ambush positioning.
 5. **Smart Alien AI Reactions (`reactionAIModeSelection: true`)**:
-   - Enemies unleash point-blank Auto Bursts at close range ($\le 6$ tiles, `reactionAutoRange: 6`) and take precise Aimed Shots at sniper range ($\ge 15$ tiles, `reactionAimedRange: 15`).
+   - Enemies unleash point-blank Auto Bursts at close range (<= 6 tiles, `reactionAutoRange: 6`) and take precise Aimed Shots at sniper range (>= 15 tiles, `reactionAimedRange: 15`).
 
 ---
 
-## 3. In-Game GUI Options: Options $\rightarrow$ Advanced $\rightarrow$ JA2S
+## 3. In-Game GUI Options: Options -> Advanced -> JA2S
 
-Whenever this mod is enabled, configuration options appear under the **`JA2S`** tab in **Options $\rightarrow$ Advanced** allowing players to customize reaction preferences and Battlescape settings.
+Whenever this mod is enabled, configuration options appear under the **`JA2S`** tab in **Options -> Advanced** allowing players to customize reaction preferences and Battlescape settings.
 
 ---
 

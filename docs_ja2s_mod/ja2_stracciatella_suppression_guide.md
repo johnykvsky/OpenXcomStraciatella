@@ -56,16 +56,16 @@ OpenXcom tracks projectiles through continuous 3D voxel space:
 ### 2.2 Time Unit (TU) Penalties & Pinning
 Suppressed units suffer a Time Unit deduction on their upcoming turn:
 
-$$\text{TU Penalty} = \min\left(\text{BaseTU} \times 25\%, \; \text{SuppressionPoints} \times 2\right)$$
+`TU Penalty = min(BaseTU * 25%, SuppressionPoints * 2)`
 
-- A heavily suppressed unit loses up to **$25\%$ of their Time Units** on their next turn.
+- A heavily suppressed unit loses up to **25% of their Time Units** on their next turn.
 - Pinned enemies behind cover cannot easily peek, fire an aimed shot, and duck back—they are forced to spend their limited TUs either hunkering down or taking desperate low-accuracy snap shots.
 
 ---
 
 ### 2.3 Immediate Reaction Overwatch Disruption
 - Every near-miss bullet deducts from the target's **current Time Units** in real-time.
-- Because reaction fire score is calculated as $\text{Reactions} \times \frac{\text{Current TU}}{\text{Base TU}}$, laying down suppressive fire directly **erodes the enemy's reaction score**.
+- Because reaction fire score is calculated as `Reactions * (Current TU / Base TU)`, laying down suppressive fire directly **erodes the enemy's reaction score**.
 - **Tactical Clearing**: Firing a covering burst down an alien corridor reduces the alien's reaction score, allowing teammates to cross safely without drawing reaction fire.
 
 ---
@@ -73,7 +73,7 @@ $$\text{TU Penalty} = \min\left(\text{BaseTU} \times 25\%, \; \text{SuppressionP
 ### 2.4 Forced Defensive Kneeling ("Hit the Dirt!")
 *Inspired by JA2's automatic crouching/prone reaction when under heavy fire.*
 
-- If a standing soldier or alien accumulates **$3$ or more suppression points** from an incoming burst:
+- If a standing soldier or alien accumulates **3 or more suppression points** from an incoming burst:
   - The unit immediately dives to the ground (**forces kneeling stance**).
   - Dropping down reduces the unit's vertical hitbox from 22 to 14 voxels, allowing waist-high cover (sandbags, fences, windows) to block subsequent incoming bullets.
 
@@ -81,7 +81,7 @@ $$\text{TU Penalty} = \min\left(\text{BaseTU} \times 25\%, \; \text{SuppressionP
 
 ### 2.5 Morale Shock
 Incoming heavy fire shakes soldiers and aliens alike:
-$$\text{Morale Loss} = \left(\frac{\text{SuppressionPoints}}{2}\right) \times 3$$
+`Morale Loss = (SuppressionPoints / 2) * 3`
 - Pinned soldiers facing overwhelming firepower suffer morale degradation, eventually triggering panic or frantic retreat if left unsupported.
 
 ---
@@ -90,7 +90,7 @@ $$\text{Morale Loss} = \left(\frac{\text{SuppressionPoints}}{2}\right) \times 3$
 *Inspired by JA2's floating status text.*
 
 - **Visual Feedback (`suppressionVisualFeedback: true`)**:
-  - When a unit accumulates $\ge 3$ suppression points, a combat notification is logged to the **HitLog**:
+  - When a unit accumulates >= 3 suppression points, a combat notification is logged to the **HitLog**:
     ```text
     <Unit Name> IS PINNED DOWN!
     ```
@@ -111,7 +111,7 @@ $$\text{Morale Loss} = \left(\frac{\text{SuppressionPoints}}{2}\right) \times 3$
 1. **Suppressed Alien Priority Shift**:
    - The AI recognizes when it is pinned down under heavy fire.
    - **Reckless Charges Aborted**: Suppressed aliens cancel aggressive pushes.
-   - **Hard Cover Focus**: The AI increases preference for defensive ambush cover ($+80\%$ ambush preference, $-40\%$ combat odds), hiding behind obstacles until the suppression wears off.
+   - **Hard Cover Focus**: The AI increases preference for defensive ambush cover (+80% ambush preference, -40% combat odds), hiding behind obstacles until the suppression wears off.
 2. **Disrupting Alien Reaction Fire**:
    - Terrifying alien reaction snipers (e.g. Mutons, Sectopods) can be neutralized by suppressive fire without needing a direct hit.
 
@@ -150,7 +150,7 @@ The companion mod **`JA2_Stracciatella_Suppression_TFTD`** configures 3D suppres
 ## 7. How to Enable / Disable
 
 1. Start **OpenXcom** (`make ufo`, `make tftd`, or `make openxcom`).
-2. Go to **Options** $\rightarrow$ **Mods**.
+2. Go to **Options** -> **Mods**.
 3. Under the active master mod:
    - For **UFO / xcom1**: Check `[X] Jagged Alliance 2 Straciatella Suppression`
    - For **TFTD / xcom2**: Check `[X] Jagged Alliance 2 Straciatella Suppression TFTD`

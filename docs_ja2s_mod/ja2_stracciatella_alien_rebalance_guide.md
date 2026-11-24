@@ -18,7 +18,7 @@ With the **Jagged Alliance 2 Stracciatella (JA2S)** modifications active:
 * **Tactical Acoustics & Awareness**: Guards track sound in 3D space, transitioning across `STATUS_GREEN`, `STATUS_YELLOW`, and `STATUS_RED`.
 * **Tactical Suppression**: Near-misses apply suppression points, forcing units into defensive kneeling and draining Time Units.
 * **Tactical Ballistics & Beyond-Visual-Range (BVR)**: Targets outside personal sight suffer a 50% accuracy penalty unless designated by spotters.
-* **Interactive Reaction Interrupts**: Reaction scores dynamically contest turns, with intelligent AI mode selection (Auto at $\le 6$ tiles, Aimed at $\ge 15$ tiles).
+* **Interactive Reaction Interrupts**: Reaction scores dynamically contest turns, with intelligent AI mode selection (Auto at <= 6 tiles, Aimed at >= 15 tiles).
 
 To bring enemies in line with these tactical systems, this guide specifies species-specific sensory, acoustic, psychological, and AI parameters.
 
@@ -369,7 +369,7 @@ Both `JA2_Stracciatella_Aliens` (UFO) and `JA2_Stracciatella_Aliens_TFTD` (TFTD)
 ### 7.2 Defensive End-of-Turn Kneeling
 * Humanoid infantry (Sectoids, Mutons, Ethereals, Aquatoids, Gillmen, Tasoths) that finish their turn with remaining Time Units in combat or alerted status automatically **drop to one knee**.
 * **Low Cover Utilization**: Reduces vertical voxel height from 22 voxels to ~14 voxels, allowing waist-high sandbags, sills, and half-walls to provide genuine ballistic cover.
-* **Reaction Precision & Bipod Stabilization**: Grants the alien the $+20\%$ kneeling bonus (and heavy weapon bipod stabilization) for any reaction fire triggered during the player's upcoming turn.
+* **Reaction Precision & Bipod Stabilization**: Grants the alien the +20% kneeling bonus (and heavy weapon bipod stabilization) for any reaction fire triggered during the player's upcoming turn.
 
 ### 7.3 Battlefield Weapon Scavenging (`pickUpWeaponsMoreActively: true`)
 * In vanilla OpenXcom, an alien whose weapon is blown away or who runs out of ammunition wanders aimlessly like a sitting duck.

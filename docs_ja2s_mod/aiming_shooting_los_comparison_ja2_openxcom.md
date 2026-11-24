@@ -32,31 +32,31 @@ In JA2, Chance-To-Hit is an integer percentage clamped strictly between **1% (`M
    - Uses `EffectiveMarksmanship(pSoldier)`.
    - Modified by morale and penalized by fatigue.
    - If the weapon's condition is lower than Marksmanship:
-     $$\text{Base CTH} = \frac{\text{EffectiveMarksmanship} + \text{GunCondition}}{2}$$
+     `Base CTH = (EffectiveMarksmanship + GunCondition) / 2`
 2. **Aiming Time (Continuous AP Investment)**:
    - Players can right-click the targeting cursor to spend additional Action Points (APs), adding up to 4 aiming rings.
    - Each spent aiming AP adds a flat bonus:
-     $$\text{Bonus} = \text{AIM\_BONUS\_PER\_AP} \times \text{AimTime}$$
+     `Bonus = AIM_BONUS_PER_AP * AimTime`
      *(Typically +10% to +12% per aiming click, provided the target is within sight).*
 3. **Targeted Body Parts**:
    - **Torso**: Baseline target size (no extra modifier).
-   - **Head**: Scaled distance penalty: $-3\%$ per tile of distance (`3 * iSightRange / 10`). Much harder at long range, but ignores body armor and deals severe critical damage.
-   - **Legs**: Scaled distance penalty: $-1\%$ per tile of distance (`iSightRange / 10`).
+   - **Head**: Scaled distance penalty: -3% per tile of distance (`3 * iSightRange / 10`). Much harder at long range, but ignores body armor and deals severe critical damage.
+   - **Legs**: Scaled distance penalty: -1% per tile of distance (`iSightRange / 10`).
 4. **Stance & Attachments**:
-   - **Crouch**: Bonus up to $+8\%$ (`AIM_BONUS_CROUCHING`).
-   - **Prone**: Bonus up to $+16\%$ (`AIM_BONUS_PRONE`). A mounted **Bipod** increases this prone bonus by up to $+50\%$.
+   - **Crouch**: Bonus up to +8% (`AIM_BONUS_CROUCHING`).
+   - **Prone**: Bonus up to +16% (`AIM_BONUS_PRONE`). A mounted **Bipod** increases this prone bonus by up to +50%.
    - **Sniper Scope**: When aiming (`ubAimTime > 0`) at targets beyond minimum scope range (`MIN_SCOPE_RANGE`), each aim AP reduces the perceived distance by 20% (up to an 80% distance reduction), drastically mitigating range penalties.
-   - **Laser Scope**: Flat bonus (up to $+20\%$ in dim light, scaled down in full daylight).
+   - **Laser Scope**: Flat bonus (up to +20% in dim light, scaled down in full daylight).
 5. **Distance & Gun Effective Range**:
    - Weapon effective range penalty:
-     $$\text{Penalty} = \frac{(\text{GunMaxRange} - \text{Distance} \times 3) \times 10}{17 \times 10}$$
-   - Sight distance modifier: $+3\% \times (8\text{ tiles} - \text{EffectiveSightRange})$.
+     `Penalty = ((GunMaxRange - Distance * 3) * 10) / (17 * 10)`
+   - Sight distance modifier: `+3% * (8 tiles - EffectiveSightRange)`.
 6. **Target Status Penalties**:
-   - Target movement: Up to $-30\%$ penalty based on tiles the target moved in their turn.
+   - Target movement: Up to -30% penalty based on tiles the target moved in their turn.
    - Target dodge: If the target sees the shooter, the target's Agility and Experience reduce the shooter's CTH unless countered by the shooter's Dexterity and Experience.
 7. **Threshold Halving**:
-   - **Target beyond Gun Effective Range**: Final CTH is **cut in half** ($\text{iChance} \div 2$).
-   - **Target beyond Shooter's Vision Range**: Final CTH is **cut in half** ($\text{iChance} \div 2$).
+   - **Target beyond Gun Effective Range**: Final CTH is **cut in half** (`iChance / 2`).
+   - **Target beyond Shooter's Vision Range**: Final CTH is **cut in half** (`iChance / 2`).
 
 #### Resolution
 - The game rolls `uiDiceRoll = PreRandom(100)`.
@@ -74,7 +74,7 @@ In JA2, Chance-To-Hit is an integer percentage clamped strictly between **1% (`M
 
 #### Accuracy Rating Formula
 OpenXcom calculates an effective accuracy rating for the attack action:
-$$\text{Final Accuracy} = \text{SoldierFiringAccuracy} \times \text{WeaponModeAccuracy} \times \text{HealthModifier} \times \text{KneelBonus} \times \text{OneHandPenalty}$$
+`Final Accuracy = SoldierFiringAccuracy * WeaponModeAccuracy * HealthModifier * KneelBonus * OneHandPenalty`
 
 1. **Fire Modes (Discrete AP / TU Investment)**:
    Instead of fine-tuning aim click by click, you select from discrete weapon firing modes:
@@ -82,23 +82,23 @@ $$\text{Final Accuracy} = \text{SoldierFiringAccuracy} \times \text{WeaponModeAc
    - **Snap Shot**: Moderate accuracy multiplier (typically 50%–70%), low TU cost (typically 25%–40% of max TUs).
    - **Auto Shot**: Lowest accuracy multiplier per bullet (typically 30%–50%), fires a 3-round burst at moderate TU cost.
 2. **Kneeling Bonus**:
-   - Kneeling multiplies the weapon's accuracy by the kneel bonus (vanilla default: **$+15\%$**, `result * 115 / 100`).
+   - Kneeling multiplies the weapon's accuracy by the kneel bonus (vanilla default: **+15%**, `result * 115 / 100`).
 3. **One-Handed Penalty**:
-   - Firing a two-handed weapon while holding any item in the off-hand incurs a **$-20\%$ penalty** (`result * 80 / 100`).
+   - Firing a two-handed weapon while holding any item in the off-hand incurs a **-20% penalty** (`result * 80 / 100`).
 4. **Health and Fatal Wounds Modifier**:
-   $$\text{HealthModifier} = \max\left(10, \frac{25 \cdot \text{CurrentHealth}}{\text{BaseHealth}} + 75 - 10 \cdot (\text{Wounds}_{\text{head}} + \text{Wounds}_{\text{arms}})\right)$$
+   `HealthModifier = max(10, (25 * CurrentHealth / BaseHealth) + 75 - 10 * (Wounds_head + Wounds_arms))`
    Lower health and untreated fatal wounds on the head or shooting arms heavily degrade aim.
 
 #### Trajectory Dispersion & Raycasting
 Rather than rolling for an abstract hit, OpenXcom passes the accuracy rating into `Projectile::applyAccuracy`:
 1. **Deviation Calculation**:
-   $$\text{deviation} = \text{RNG}(0, 100) - (\text{Accuracy} \times 100)$$
+   `deviation = RNG(0, 100) - (Accuracy * 100)`
    - If `deviation >= 0` ("miss" roll): `deviation += 50` (widens spread).
    - If `deviation < 0` ("hit" roll): `deviation += 10` (tightens spread).
 2. **Distance Scaling**:
-   $$\text{SpreadRadius} = \max\left(1, \frac{\text{DistanceVoxels} \times \text{deviation}}{200}\right)$$
+   `SpreadRadius = max(1, (DistanceVoxels * deviation) / 200)`
 3. **Voxel Raycast**:
-   - The target coordinates $(x, y, z)$ are displaced by random offsets within `SpreadRadius`.
+   - The target coordinates (x, y, z) are displaced by random offsets within `SpreadRadius`.
    - The bullet trajectory is extended along this angle (`calculateLineVoxel`).
    - The first physical 3D voxel obstacle the ray meets (ground, fence, wall, innocent bystander, friendly soldier, or alien voxel bounding box) takes the impact.
 
@@ -112,20 +112,20 @@ Rather than rolling for an abstract hit, OpenXcom passes the accuracy rating int
 - [`LOS.cc`](file:///home/jcx/wrk-ai/JA2-OpenXcom%20-%20sources/ja2-stracciatella-0.22.1/src/game/Tactical/LOS.cc#L2896-L2935) — `SoldierToSoldierBodyPartChanceToGetThrough`
 
 - **Field of View (FOV)**:
-  - Central cone of $45^\circ$ forward view (`STRAIGHT`) provides maximum sight distance.
+  - Central cone of 45° forward view (`STRAIGHT`) provides maximum sight distance.
   - Peripheral angles have reduced sight distance unless the soldier is alerted (Status Red).
   - Blind to the rear.
 - **Sight Distances**:
   - **Daylight**: Normal max sight is **26 tiles** (`STRAIGHT * 2`).
   - **Night / Darkness**: Dynamic light levels reduce view distance down to **6–10 tiles**.
 - **Equipment & Traits**:
-  - **Night Vision Goggles**: $+2$ tiles of sight in darkness.
-  - **UV Goggles**: $+4$ tiles of sight in darkness (outdoors only).
-  - **Night-Ops Trait**: $+1$ tile per trait level in darkness.
-  - **Sun Goggles**: $+1$ to $+2$ tiles in bright desert daylight.
+  - **Night Vision Goggles**: +2 tiles of sight in darkness.
+  - **UV Goggles**: +4 tiles of sight in darkness (outdoors only).
+  - **Night-Ops Trait**: +1 tile per trait level in darkness.
+  - **Sun Goggles**: +1 to +2 tiles in bright desert daylight.
   - **Muzzle Flash**: Firing a firearm without a silencer/suppressor reveals the shooter at daytime light levels for that frame.
   - **Smoke & Mustard Gas**: Reduces visibility to a maximum of **2 tiles** unless wearing a gas mask.
-  - **Roofs**: Perched soldiers gain $+2$ tiles of sight distance.
+  - **Roofs**: Perched soldiers gain +2 tiles of sight distance.
 
 ### 3.2 OpenXcom
 *Source references:*
@@ -133,8 +133,8 @@ Rather than rolling for an abstract hit, OpenXcom passes the accuracy rating int
 - [`TileEngine.cpp`](file:///home/jcx/wrk-ai/JA2-OpenXcom%20-%20sources/OpenXcomStraciatella/src/Battlescape/TileEngine.cpp#L1730-L1770) — Visibility distance helper
 
 - **Field of View (FOV)**:
-  - Fixed $90^\circ$ forward visual quadrant.
-  - Units cannot see outside their $90^\circ$ arc; turning costs 1 TU per $45^\circ$.
+  - Fixed 90° forward visual quadrant.
+  - Units cannot see outside their 90° arc; turning costs 1 TU per 45°.
 - **Sight Distances**:
   - **Daylight**: **20 tiles** for both X-Com soldiers and aliens.
   - **Night / Darkness**:
@@ -173,7 +173,7 @@ Rather than rolling for an abstract hit, OpenXcom passes the accuracy rating int
    - The ruleset option `noLOSAccuracyPenalty` is disabled by default (`-1`).
    - Member B fires with their full Aimed or Snap shot accuracy rating.
 4. **Natural Geometric Dispersion**:
-   The only drawback is physical: because the trajectory spread is an angular cone originating from Member B, the dispersion envelope widens linearly with distance ($\text{Spread} \propto \text{Distance}$). Hitting a 1-tile target at 40 tiles is hard simply because the cone covers a wider area, but there is **no artificial stat penalty**.
+   The only drawback is physical: because the trajectory spread is an angular cone originating from Member B, the dispersion envelope widens linearly with distance (Spread ∝ Distance). Hitting a 1-tile target at 40 tiles is hard simply because the cone covers a wider area, but there is **no artificial stat penalty**.
 5. **Blind Fire Allowed**:
    Member B does not even need Member A to spot the alien. The player can target dark, unexplored fog-of-war tiles and fire blindly into the darkness.
 
@@ -187,7 +187,7 @@ Rather than rolling for an abstract hit, OpenXcom passes the accuracy rating int
 
 1. **Team Opplist Integration**:
    - When Member A spots an enemy, the enemy is flagged in `gbPublicOpplist[OUR_TEAM]` and rendered on the tactical map.
-   - In [`Weapons.cc` line 2103](file:///home/jcx/wrk-ai/JA2-OpenXcom%20-%20sources/ja2-stracciatella-0.22.1/src/game/Tactical/Weapons.cc#L2103), the engine explicitly checks `gbPublicOpplist` to permit spotting for snipers, evaluating line of sight up to $2 \times \text{MaxDistanceVisible}$ (up to **52 tiles**).
+   - In [`Weapons.cc` line 2103](file:///home/jcx/wrk-ai/JA2-OpenXcom%20-%20sources/ja2-stracciatella-0.22.1/src/game/Tactical/Weapons.cc#L2103), the engine explicitly checks `gbPublicOpplist` to permit spotting for snipers, evaluating line of sight up to 2 * MaxDistanceVisible (up to **52 tiles**).
 2. **Virtual Range Doubling Penalty**:
    If the target is farther than Member B's personal vision distance (`sDistVis`), the excess distance is doubled for distance-dropoff calculations:
    ```cpp
@@ -205,12 +205,12 @@ Rather than rolling for an abstract hit, OpenXcom passes the accuracy rating int
        iChance /= 2; // Penalize out of sight shots
    }
    ```
-   The final Chance-To-Hit is **halved ($\div 2$)** solely because the shooter cannot personally see the target.
+   The final Chance-To-Hit is **halved (/ 2)** solely because the shooter cannot personally see the target.
 4. **Cumulative Gun Range Halving**:
-   If the distance also exceeds the gun's effective range statistic, `iChance /= 2` triggers **again**, reducing hit chance to a quarter ($\div 4$) of base value.
+   If the distance also exceeds the gun's effective range statistic, `iChance /= 2` triggers **again**, reducing hit chance to a quarter (/ 4) of base value.
 5. **The Necessary Countermeasure (Sniper Scope & Aiming)**:
    - Sniping an out-of-sight target spotted by a teammate in JA2 is only viable with a **Sniper Scope** and full aiming investment.
-   - At [line 2217](file:///home/jcx/wrk-ai/JA2-OpenXcom%20-%20sources/ja2-stracciatella-0.22.1/src/game/Tactical/Weapons.cc#L2217), spending 4 aiming APs with a scope shrinks the effective sight distance by up to $80\%$, offsetting the out-of-sight distance penalties.
+   - At [line 2217](file:///home/jcx/wrk-ai/JA2-OpenXcom%20-%20sources/ja2-stracciatella-0.22.1/src/game/Tactical/Weapons.cc#L2217), spending 4 aiming APs with a scope shrinks the effective sight distance by up to 80%, offsetting the out-of-sight distance penalties.
 
 ---
 
@@ -219,10 +219,10 @@ Rather than rolling for an abstract hit, OpenXcom passes the accuracy rating int
 | Metric / Action | OpenXcom | Jagged Alliance 2 (Stracciatella) |
 | :--- | :--- | :--- |
 | **Can you shoot an enemy spotted only by a teammate?** | **Yes**, completely unhindered. | **Yes**, supported via `gbPublicOpplist`. |
-| **Penalty for lack of personal LOS?** | **None** (vanilla rules). | **Massive**: Virtual distance doubled, and final CTH is **halved ($\div 2$)**. |
-| **Weapon range limits?** | Effectively infinite for rifles/heavy weapons. | Strict range stats; exceeding max range **halves CTH again ($\div 2$)**. |
+| **Penalty for lack of personal LOS?** | **None** (vanilla rules). | **Massive**: Virtual distance doubled, and final CTH is **halved (/ 2)**. |
+| **Weapon range limits?** | Effectively infinite for rifles/heavy weapons. | Strict range stats; exceeding max range **halves CTH again (/ 2)**. |
 | **Aiming refinement?** | Discrete fire mode choice (Aimed vs. Snap vs. Auto). | Granular AP investment (up to 4 aiming rings per shot). |
-| **Stance bonuses?** | Kneeling grants a $+15\%$ accuracy multiplier. | Crouch grants $+8\%$; Prone grants $+16\%$ ($+24\%$ with Bipod). |
+| **Stance bonuses?** | Kneeling grants a +15% accuracy multiplier. | Crouch grants +8%; Prone grants +16% (+24% with Bipod). |
 | **Night combat balance?** | Asymmetrical: aliens see 20 tiles in the dark, humans see 9 tiles unless using flares. | Symmetrical: ambient light affects everyone; mitigated by Night/UV goggles and traits. |
 | **Shooting through fog of war?** | Permitted anywhere (ground, walls, dark tiles). | Allowed, but penalized by `AIM_PENALTY_BLIND`. |
 
@@ -242,7 +242,7 @@ Neither solution is universally superior in a vacuum; rather, each represents an
 | **Tactical Granularity & Depth** | **Coarse**: 3 discrete fire modes (Snap/Aimed/Auto), no body-part targeting, no weapon attachment synergies. | **Extremely Deep**: Granular AP aiming clicks, head/torso/leg calls, scopes, bipods, laser sights, fatigue, shock. | **JA2** |
 | **Predictability & Player Agency** | **Can feel arbitrary**: Low-voxel obstacles (windowsills, fences, dirt mounds) can block shots unexpectedly. | **Transparent & Fair**: Displays explicit Chance-To-Hit (CTH) % and Chance-To-Get-Through (CTGT) % before firing. | **JA2** |
 | **Squad Sight / Sniping Realism** | **Simplistic / Arcady**: Infinite effective range; snipers can shoot across entire maps with zero LOS stat penalty. | **Authentic & Nuanced**: Shooting beyond personal sight range halves CTH; requires specialized sniper builds to be viable. | **JA2** |
-| **Implementation Simplicity** | Clean mathematical pipeline: $\text{Accuracy} \rightarrow \text{Cone Deviation} \rightarrow \text{Raycast}$. | High ruleset complexity: hundreds of conditional modifiers, special cases, and stat interactions. | **OpenXcom** |
+| **Implementation Simplicity** | Clean mathematical pipeline: Accuracy -> Cone Deviation -> Raycast. | High ruleset complexity: hundreds of conditional modifiers, special cases, and stat interactions. | **OpenXcom** |
 
 ---
 
@@ -262,12 +262,12 @@ Neither solution is universally superior in a vacuum; rather, each represents an
 1. **Tactical Agency and Deep Mercenary Differentiation**:
    OpenXcom cannot match JA2's granular control over every single attack:
    - **Continuous Aiming APs**: Deciding whether to take a quick snap shot or invest 1–4 extra APs into aiming creates crucial risk/reward dynamics every turn.
-   - **Called Shots (Body Parts)**: The choice between an easy body shot or a high-risk, high-reward headshot ($-3\%$ CTH per tile of distance penalty vs. lethal critical damage bypassing torso armor).
+   - **Called Shots (Body Parts)**: The choice between an easy body shot or a high-risk, high-reward headshot (-3% CTH per tile of distance penalty vs. lethal critical damage bypassing torso armor).
    - **Modular Weapon Attachments**: Attachments in JA2 (Bipods, Sniper Scopes, Laser Sights, Duckbills, Barrel Extenders) directly modify specific mathematical terms in the CTH equation rather than functioning as generic flat-percentage buffs.
 2. **Elimination of "Micro-Voxel Frustrations"**:
    Pure physical raycasting engines suffer from micro-geometry quirks: a soldier kneeling behind a window or low barricade might hit the windowsill because the gun's voxel origin is 2 units too low. JA2's hybrid engine pre-calculates both Chance-To-Hit (CTH) and Chance-To-Get-Through (CTGT) ([`LOS.cc`](file:///home/jcx/wrk-ai/JA2-OpenXcom%20-%20sources/ja2-stracciatella-0.22.1/src/game/Tactical/LOS.cc#L2896-L2935)), clearly showing the player whether cover will obstruct the bullet *before* they waste APs.
 3. **Militarily Authentic Long-Range Engagement**:
-   In OpenXcom, a rookie with a basic rifle can shoot an alien spotted by a tank 40 tiles away with zero accuracy penalty. JA2 explicitly avoids this unrealistic "map-sniping": shooting beyond personal vision range cuts final CTH in half ($\div 2$) and doubles distance penalties. Spotting for a sniper is only effective if the player equips a dedicated sniper rifle, mounts a bipod, goes prone, attaches a Sniper Scope, and spends full APs aiming.
+   In OpenXcom, a rookie with a basic rifle can shoot an alien spotted by a tank 40 tiles away with zero accuracy penalty. JA2 explicitly avoids this unrealistic "map-sniping": shooting beyond personal vision range cuts final CTH in half (/ 2) and doubles distance penalties. Spotting for a sniper is only effective if the player equips a dedicated sniper rifle, mounts a bipod, goes prone, attaches a Sniper Scope, and spends full APs aiming.
 
 ---
 

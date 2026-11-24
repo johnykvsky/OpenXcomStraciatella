@@ -15,22 +15,22 @@ This mod brings **bullet suppression, pinning fire, reaction disruption, forced 
      - Heavy Cannons & Heavy Plasma: **4 points** per bullet
      - Rocket Launchers: **5 points** per rocket
 2. **Time Unit Penalties & Pinning**:
-   - Suppressed units lose up to **$25\%$ of their Time Units** on their next turn (`suppressionMaxTUPenalty: 25`).
+   - Suppressed units lose up to **25% of their Time Units** on their next turn (`suppressionMaxTUPenalty: 25`).
    - Pinned enemies cannot easily peek, fire an aimed shot, and retreat back into cover.
 3. **Immediate Overwatch Disruption**:
    - Every near-miss bullet deducts from the target's current TUs in real-time, directly degrading their reaction score and breaking deadly alien reaction overwatch.
 4. **Forced Defensive Kneeling ("Hit the Dirt!") (`suppressionKneelThreshold: 3`)**:
    - Standing units that accumulate 3 or more suppression points immediately drop down (forced kneel), shrinking their vertical profile from 22 to 14 voxels to take shelter behind waist-high cover.
 5. **Morale Shock (`suppressionMoraleLoss: 3`)**:
-   - Heavy incoming fire erodes target morale by $-3$ per threshold, accelerating panic or retreat on unsupported units.
+   - Heavy incoming fire erodes target morale by -3 per threshold, accelerating panic or retreat on unsupported units.
 6. **Combat UI Notifications (`suppressionVisualFeedback: true`)**:
    - Logs `<Unit> IS PINNED DOWN!` to the Battlescape HitLog when a unit is pinned, providing instant confirmation of broken overwatch.
 
 ---
 
-## 2. In-Game GUI Options: Options $\rightarrow$ Advanced $\rightarrow$ JA2S
+## 2. In-Game GUI Options: Options -> Advanced -> JA2S
 
-Whenever this mod is enabled, configuration options appear under the **`JA2S`** tab in **Options $\rightarrow$ Advanced**:
+Whenever this mod is enabled, configuration options appear under the **`JA2S`** tab in **Options -> Advanced**:
 * **Suppression UI Alerts**: `YES` / `NO` (toggles on-screen HitLog notifications when units are pinned).
 
 ---
@@ -38,7 +38,7 @@ Whenever this mod is enabled, configuration options appear under the **`JA2S`** 
 ## 3. How It Affects Gameplay & Enemies
 
 * **Player Gameplay**: Heavy weapons (Heavy Cannon, Auto-Cannon, Heavy Laser) become essential area-denial tools. Laying down a covering burst neutralizes alien snipers and allows friendly operatives to safely cross open terrain or breach guarded doors.
-* **Enemy Aliens**: Pinned aliens abort aggressive charges and prioritize hard defensive cover ($+80\%$ ambush preference, $-40\%$ combat odds). Terrifying reaction snipers (e.g., Mutons, Sectopods) can be suppressed to break their overwatch without needing direct hits.
+* **Enemy Aliens**: Pinned aliens abort aggressive charges and prioritize hard defensive cover (+80% ambush preference, -40% combat odds). Terrifying reaction snipers (e.g., Mutons, Sectopods) can be suppressed to break their overwatch without needing direct hits.
 
 ---
 

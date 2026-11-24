@@ -41,7 +41,7 @@ In **Jagged Alliance 2**, bullet volume itself is a weapon. Firing an LMG or bur
 
 ### The Core Problem
 - **OpenXcom**: Uses an automated reaction fire check:
-  $$\text{Reaction Score} = \text{Unit Reaction} \times \frac{\text{Current TU}}{\text{Max TU}}$$
+  `Reaction Score = Unit Reaction * (Current TU / Max TU)`
   If the watcher beats the moving target, the watcher automatically fires a Snap Shot. The player has no say in this action: you cannot choose to duck, retreat, throw a flare, switch weapons, or hold fire for a better target.
 - **Jagged Alliance 2**: Features **Interactive Interrupt Duels**:
   - Evaluated through `ResolveInterruptsVs` and `CalculateInterruptDuelPoints`.
@@ -70,7 +70,7 @@ In **Jagged Alliance 2**, bullet volume itself is a weapon. Firing an LMG or bur
 
 ### The Core Problem
 - **OpenXcom**: Supports only two stances: **Standing** and **Kneeling**.
-  - Kneeling reduces vertical voxel height from 22 voxels to $\sim 14$ voxels and grants accuracy bonuses.
+  - Kneeling reduces vertical voxel height from 22 voxels to ~14 voxels and grants accuracy bonuses.
   - However, there is no Prone stance. Soldiers cannot crawl under fences, through ventilation, or flatten themselves in high grass.
 - **Jagged Alliance 2**: Built around three distinct stances:
   1. **Standing**: Fastest mobility, full view range, largest target profile.
@@ -88,7 +88,7 @@ In **Jagged Alliance 2**, bullet volume itself is a weapon. Firing an LMG or bur
 
 ### The Core Problem
 - **OpenXcom**: Uses a flat damage reduction model:
-  $$\text{Damage Received} = \text{Weapon Damage} \times \text{DamageVariance}(0\%\text{--}200\%) - \text{ArmorValue}$$
+  `Damage Received = Weapon Damage * DamageVariance(0%–200%) - ArmorValue`
   Directional armor plates (Front, Sides, Rear, Under) never degrade when hit by standard fire (unless destroyed by corrosive/shredding script rules in OXCE).
 - **Jagged Alliance 2**: Features authentic terminal ballistics:
   - **Ammunition Physics**:

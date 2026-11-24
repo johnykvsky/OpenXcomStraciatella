@@ -19,15 +19,15 @@ This document provides a concise, high-level overview comparing vanilla OpenXcom
 | Combat System | Vanilla OpenXcom | JA2 Stracciatella Mod Suite | Direct Gameplay Impact |
 | :--- | :--- | :--- | :--- |
 | **Accuracy by Range** | Flat accuracy across whole map; zero dropoff; point-blank misses. | Scaled effective range; sharp dropoff beyond max range; lethal close up. | Sidearms dominate close quarters; rifles/cannons required for long-range firefights. |
-| **Beyond-Visual-Range (BVR)** | Global shared sight; full accuracy at targets spotted by any scout. | **$-50\%$ accuracy penalty** if shooter lacks personal visual contact. | Eliminates Skyranger "ramp-sniping"; spotters and snipers must coordinate. |
-| **Automatic Bursts** | Identical accuracy for all 3 bullets; zero recoil; no barrel climb. | Cumulative $-15\%$ recoil penalty per consecutive round + upward climb. | Uncontrolled spraying standing up misses; kneeling/bipod absorbs recoil. |
-| **Weapon Bracing / Stance** | Flat $+15\%$ kneel bonus for all weapons equally. | $+20\%$ baseline kneel; up to $+45\%$ bipod bonus for heavy support weapons. | Entrenched machine gunners lock down fire corridors with surgical accuracy. |
-| **Obstacle Clearance** | Direct center-of-mass aim clips window sills and low half-cover (`NO LOF`). | **Aim High** (<kbd>Shift</kbd> + click) raises aim $+6$ voxels at $-15\%$ precision cost. | Enables shooting over sandbags and through window apertures without obstruction. |
-| **Near-Miss Bullets** | Binary: a miss by 1 inch causes zero impact on target. | **3D Near-Miss Suppression**: drains enemy TUs (up to $25\%$) and shakes morale. | Covering fire pins targets, disables alien reaction fire, and covers advances. |
+| **Beyond-Visual-Range (BVR)** | Global shared sight; full accuracy at targets spotted by any scout. | **-50% accuracy penalty** if shooter lacks personal visual contact. | Eliminates Skyranger "ramp-sniping"; spotters and snipers must coordinate. |
+| **Automatic Bursts** | Identical accuracy for all 3 bullets; zero recoil; no barrel climb. | Cumulative -15% recoil penalty per consecutive round + upward climb. | Uncontrolled spraying standing up misses; kneeling/bipod absorbs recoil. |
+| **Weapon Bracing / Stance** | Flat +15% kneel bonus for all weapons equally. | +20% baseline kneel; up to +45% bipod bonus for heavy support weapons. | Entrenched machine gunners lock down fire corridors with surgical accuracy. |
+| **Obstacle Clearance** | Direct center-of-mass aim clips window sills and low half-cover (`NO LOF`). | **Aim High** (<kbd>Shift</kbd> + click) raises aim +6 voxels at -15% precision cost. | Enables shooting over sandbags and through window apertures without obstruction. |
+| **Near-Miss Bullets** | Binary: a miss by 1 inch causes zero impact on target. | **3D Near-Miss Suppression**: drains enemy TUs (up to 25%) and shakes morale. | Covering fire pins targets, disables alien reaction fire, and covers advances. |
 | **Suppression Stance** | Units remain standing while under heavy fire. | Units take cover (**forced kneel**) after taking 3+ suppression points. | Suppressed targets duck behind cover, lowering their profile from subsequent fire. |
 | **Hearing & AI Alertness** | Purely visual; footsteps, opening doors, and sprinting are silent to AI. | **Tactical Acoustics & Alert Hierarchy**: sound travels with decibel decay; muffled by walls/doors. | Stealth walking avoids detection; noise lures guards into pre-aimed ambush positions. |
 | **Vision Cones** | Rigid 90° tunnel vision; 100% blind at 91° to flank. | **Realistic ~180° Peripheral Arc** detects movement at 50% max sight range. | Flank ambushes are harder to execute blindly; soldiers notice enemies beside them. |
-| **Enemy Alertness** | Binary: either passive patrol or instant map-wide combat awareness. | **3-Tier Alert State Machine**: Patrol (Green) $\to$ Investigate (Yellow) $\to$ Combat (Red). | Enemies inspect suspicious noise coordinates before sounding full combat alarms. |
+| **Enemy Alertness** | Binary: either passive patrol or instant map-wide combat awareness. | **3-Tier Alert State Machine**: Patrol (Green) -> Investigate (Yellow) -> Combat (Red). | Enemies inspect suspicious noise coordinates before sounding full combat alarms. |
 | **Reaction Overwatch** | Rigid automated single snap shot; zero player decision-making. | **Interactive Reaction Modal**: choose Snap, Burst, Aimed, Grenade, or Hold Fire. | Tactical control during interrupts; throw cooked grenades or hold fire to stay hidden. |
 | **Reaction Grenades** | Grenades sit inert on the ground until end-of-turn. | Thrown reaction grenades **detonate on impact** ("cooked") or drop instant smoke. | Instant area denial against advancing terror units and aggressive alien rushes. |
 | **AI Range Awareness** | Rigid distance brackets; fires sidearms beyond range; wastes TUs. | **Smart Range & Dropoff AI**: cancels out-of-range shots; aggressively closes the distance. | Aliens armed with sidearms aggressively push into lethal range rather than wasting fire from afar. |
@@ -39,29 +39,29 @@ This document provides a concise, high-level overview comparing vanilla OpenXcom
 ### 3.1 Point-Blank Combat vs. Long-Distance Sniping
 * **Vanilla**: A rookie with 45% accuracy has a 45% chance to hit an alien 40 tiles away and that *exact same* 45% chance at 1 tile. When a point-blank miss occurs, the 3D raycast deflects the bullet past the narrow alien hitbox into the ground or wall.
 * **With JA2 Tactical**:
-  * **Point-Blank Boost**: Close-range shots ($\le 3$ tiles) with suitable compact firearms (pistols, SMGs, shotguns) receive massive hit bonuses, reaching up to $99\%$ accuracy.
-  * **Effective Range Limits**: Weapons now have realistic maximum ranges (e.g., 15 tiles for pistols, 34 for rifles, 50 for heavy weapons). Beyond this range, accuracy degrades sharply ($-2\%$ to $-4\%$ per tile).
+  * **Point-Blank Boost**: Close-range shots (<= 3 tiles) with suitable compact firearms (pistols, SMGs, shotguns) receive massive hit bonuses, reaching up to 99% accuracy.
+  * **Effective Range Limits**: Weapons now have realistic maximum ranges (e.g., 15 tiles for pistols, 34 for rifles, 50 for heavy weapons). Beyond this range, accuracy degrades sharply (-2% to -4% per tile).
   * **Tactical Result**: Pistols and sidearms become deadly indoor breach weapons, while rifles and cannons maintain mid-to-long-range dominance.
 
 ### 3.2 Anti-Ramp Sniping (BVR Penalty)
 * **Vanilla**: A forward scout or flying tank spots an alien across the map; soldiers sitting safely inside the Skyranger drop-ship snipe the alien with zero penalty.
 * **With JA2 Tactical**:
-  * Firing at a target outside the shooter's personal line-of-sight slashes accuracy by **$50\%$**.
+  * Firing at a target outside the shooter's personal line-of-sight slashes accuracy by **50%**.
   * The targeting crosshair turns **Amber** and displays the `[BVR]` tag.
   * Dedicated optical/sniper rifles bypass or soften this penalty, restoring true spotter-sniper teamwork.
 
 ### 3.3 Recoil, Burst Climb, and Bipod Deployment
 * **Vanilla**: Auto-bursts fire three rounds with uniform accuracy, even when walking or firing heavy calibers.
 * **With JA2 Tactical**:
-  * Consecutive burst shots incur a cumulative **$-15\%$ accuracy penalty** ($0\% \to -15\% \to -30\%$) and climb $+1$ voxel vertically.
-  * **Kneeling with Heavy Weapons** simulates bipod bracing: boosts accuracy by up to **$+45\%$** and completely absorbs burst recoil.
-  * Operatives with high physical strength ($> 40$) naturally absorb recoil on smaller weapons.
+  * Consecutive burst shots incur a cumulative **-15% accuracy penalty** (0% -> -15% -> -30%) and climb +1 voxel vertically.
+  * **Kneeling with Heavy Weapons** simulates bipod bracing: boosts accuracy by up to **+45%** and completely absorbs burst recoil.
+  * Operatives with high physical strength (> 40) naturally absorb recoil on smaller weapons.
 
 ### 3.4 Overcoming Cover: Aim High (`Shift + Click`)
 * **Vanilla**: Windows and waist-high sandbags frequently block line of fire (`NO LOF`) because the engine rays straight toward the enemy's center of mass (abdomen).
 * **With JA2 Tactical**:
-  * Holding <kbd>Shift</kbd> aims at the upper silhouette/head ($+6$ voxels higher).
-  * Clears window sills and waist-high barricades cleanly in exchange for a balanced **$-15\%$ precision penalty**.
+  * Holding <kbd>Shift</kbd> aims at the upper silhouette/head (+6 voxels higher).
+  * Clears window sills and waist-high barricades cleanly in exchange for a balanced **-15% precision penalty**.
 
 ---
 
@@ -93,12 +93,12 @@ flowchart LR
 
 ### 4.1 3D Voxel Suppression & Pinning Fire
 * Near-miss bullets within 1 tile of an enemy generate **suppression points** based on weapon caliber (Heavy Cannons and Heavy Plasma generate maximum suppression).
-* Suppressed enemies lose up to **$25\%$ of their Time Units** on their next turn and suffer morale shock.
+* Suppressed enemies lose up to **25% of their Time Units** on their next turn and suffer morale shock.
 * Accumulating 3+ suppression points forces units to immediately **dive to the ground (kneel)**.
 * **Tactical Result**: Machine guns become area-denial tools. Laying down a covering burst depletes alien reaction scores, allowing teammates to safely cross open streets or breach doorway choke points.
 
 ### 4.2 Tactical Acoustics & Peripheral Vision
-* Every step, kicked door, and gunshot generates a sound wave that decays across distance and is muffled by obstacles ($-6$ through closed doors, $-10$ through solid walls).
+* Every step, kicked door, and gunshot generates a sound wave that decays across distance and is muffled by obstacles (-6 through closed doors, -10 through solid walls).
 * Acoustic disturbances alert guards along a 3-tier state machine:
   - `STATUS_GREEN`: Standard patrol.
   - `STATUS_YELLOW`: Suspicious; halts patrol, logs sound origin coordinates (`_noiseTarget`), and moves to investigate the disturbance.
@@ -115,7 +115,7 @@ flowchart LR
 * **Suppression Immunities**: Mindless horrors (Chryssalids, Silacoids, Zombies) and combat machines (Cyberdiscs, Sectopods) cannot be suppressed or forced to kneel (`fearImmune: true`, `allowsKneeling: false`). Humanoid infantry (Mutons, Sectoids) dive for cover under heavy fire.
 * **Acoustic Stealth & Movement Noise**: Snakemen (`0.5`) and Chryssalids (`0.6`) slither and stalk with muffled footsteps (3 tiles), while Sectopods (`2.0`) clank loudly across terrain (12 tiles). Airborne units glide silently through the air.
 * **Spotter & Sniper Networks**: Agile scouts (Floaters, Cyberdiscs, Sectoid Navigators) designate player positions (`spotter: 1–2`), allowing heavy gunners (Muton Engineers, Sectopods) to deliver long-range fire without personal line-of-sight penalties (`sniper: 1–3`).
-* **Smart AI Tactical Combat**: Integrated tactical intelligence—reaction fire threshold (holds overwatch fire for $\ge 25\%$ hit chances), end-of-turn defensive kneeling behind cover, sound-origin facing on acoustic investigation, weapon scavenging when disarmed, and anti-decoy threat prioritization.
+* **Smart AI Tactical Combat**: Integrated tactical intelligence—reaction fire threshold (holds overwatch fire for >= 25% hit chances), end-of-turn defensive kneeling behind cover, sound-origin facing on acoustic investigation, weapon scavenging when disarmed, and anti-decoy threat prioritization.
 
 ---
 
@@ -127,7 +127,7 @@ To give players complete clarity over these new mechanics without cluttering the
 * **Pre-Shot Line of Fire (`ja2sVisualLOFIndicator`)**: Real-time `NO LOF` indicator warns when terrain, corners, or friendly units block bullet trajectories before spending TUs.
 * **Target Elevation / Aim High (`ja2sAllowAimHigh`)**: Allows holding <kbd>Shift</kbd> to target upper silhouette over half-cover.
 * **Suppression UI Alerts (`ja2sSuppressionVisualFeedback`)**: Displays `<Unit> IS PINNED DOWN!` in the HitLog when a unit is suppressed.
-* **In-Game JA2S Configuration Tab**: All active JA2 features can be individually customized or toggled via **Options $\rightarrow$ Advanced $\rightarrow$ JA2S**.
+* **In-Game JA2S Configuration Tab**: All active JA2 features can be individually customized or toggled via **Options -> Advanced -> JA2S**.
 
 ---
 
@@ -144,10 +144,10 @@ All Jagged Alliance 2 Stracciatella mods are designed with **strict modular inde
 
 | Mod | Technical Independence | What It Governs | Dependencies & Synergies |
 | :--- | :---: | :--- | :--- |
-| **`JA2_Stracciatella_Tactical`** | **100% Standalone** | Ballistics, ranges, BVR accuracy penalty ($-50\%$), burst recoil climb, bipod kneel bonuses, Aim High (<kbd>Shift</kbd>), and baseline human night vision (12 tiles). | **None.** Operates completely on its own. |
+| **`JA2_Stracciatella_Tactical`** | **100% Standalone** | Ballistics, ranges, BVR accuracy penalty (-50%), burst recoil climb, bipod kneel bonuses, Aim High (<kbd>Shift</kbd>), and baseline human night vision (12 tiles). | **None.** Operates completely on its own. |
 | **`JA2_Stracciatella_Awareness`** | **100% Standalone** | Tactical acoustics, footsteps/doors/gunfire noise propagation, 3-tier alert state machine (Green/Yellow/Red), and ~180° peripheral vision. | **None.** Operates completely on its own. |
 | **`JA2_Stracciatella_Suppression`** | **100% Standalone** | 3D voxel near-miss detection, target TU drain (up to 25%), morale shock, forced defensive kneeling, and reaction overwatch disruption. | **None.** Operates completely on its own. |
-| **`JA2_Stracciatella_Reaction`** | **100% Standalone** | Interactive interrupt prompt (Snap, Auto, Aimed, Grenade, Hold Fire), cooked impact grenade detonation, and AI reaction range selection (Auto $\le 6$, Aimed $\ge 15$). | **None.** Operates completely on its own. |
+| **`JA2_Stracciatella_Reaction`** | **100% Standalone** | Interactive interrupt prompt (Snap, Auto, Aimed, Grenade, Hold Fire), cooked impact grenade detonation, and AI reaction range selection (Auto <= 6, Aimed >= 15). | **None.** Operates completely on its own. |
 | **`JA2_Stracciatella_Aliens`** | **100% Standalone** *(Soft Synergy)* | Alien night vision tiers (14–20 tiles), thermal smoke vision (`heatVision`), psionic wall sight (`psiVision`), suppression immunities, acoustic stealth (`noiseMovementFactor`), hearing bonuses, and spotter/sniper AI roles. | **Soft Synergy with Tactical, Awareness, and Suppression** (see below). |
 
 ### 6.3 Cross-Mod Synergy Breakdown
